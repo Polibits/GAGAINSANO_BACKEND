@@ -1,0 +1,24 @@
+{
+  "name": "gagainsano-backend",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000G\u0000A\u0000G\u0000A\u0000I\u0000N\u0000S\u0000A\u0000N\u0000O\u0000_\u0000B\u0000A\u0000C\u0000K\u0000E\u0000N\u0000D\u0000\r\u0000 \u0000",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Polibits/GAGAINSANO_BACKEND.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Polibits/GAGAINSANO_BACKEND/issues"
+  },
+  "homepage": "https://github.com/Polibits/GAGAINSANO_BACKEND#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.1.0"
+  }
+}
