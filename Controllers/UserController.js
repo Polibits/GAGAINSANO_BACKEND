@@ -23,38 +23,13 @@ function add_user_credentials(con, email, password){
  * adiciona o usuário na tabela UserCredentials.
  * @param {string} con conexão com o banco de dados sql.
  * @param {string} email email informado pelo usuário.
- * @returns {boolean} true significa que a autenticação foi bem sucedida; false, caso contrário.
- */
-function get_salt(con, email){
-    var search_condition = ["WHERE email = '", sha256(email), "'"].join("");
-    var sql_query = "SELECT salt FROM UserCredentials " + search_condition;
-    var salt = '';
-
-    console.log(sha256(email));
-
-    con.query(sql_query, function(error, result, fields) {
-        if(error) throw error;
-        console.log(result);
-        if(result.length == 0){
-            console.log("não encontrado");
-        } else {
-            return true;
-        }
-        con.end();
-    });
-    return salt;
-}
-
-/**
- * adiciona o usuário na tabela UserCredentials.
- * @param {string} con conexão com o banco de dados sql.
- * @param {string} email email informado pelo usuário.
  * @param {string} password senha enviada pelo usuário.
  * @returns {boolean} true significa que a autenticação foi bem sucedida; false, caso contrário.
  */
 function autheticate_credentials(con, email, password){
-    var search_condition = ["WHERE email = '", email, "'"].join("");
+    var search_condition = ["WHERE email = '", sha256(email), "'"].join("");
     var sql_query = "SELECT email, password, salt FROM UserCredentials " + search_condition;
+    var sucess = false;
 
     con.query(sql_query, function(error, result, fields) {
         if(error) throw error;
@@ -62,13 +37,17 @@ function autheticate_credentials(con, email, password){
         if(result.length == 0){
             console.log("não encontrado");
         } else {
-            console.log("autenticação bem sucedida!");
-            return true;
+            if(result[0].password == sha256(password + result[0].salt)){
+                console.log("autenticação bem sucedida!");
+                sucess = true;
+            } else {
+                console.log("autenticação falha");
+            }
         }
         con.end();
     });
 
-    return false;
+    return sucess;
 }
 
 function sha256(content){
@@ -81,4 +60,4 @@ function new_salt(length){
     .slice(0,length);
 };
 
-module.exports = {add_user_credentials, autheticate_credentials, get_salt};
+module.exports = {add_user_credentials, autheticate_credentials};
