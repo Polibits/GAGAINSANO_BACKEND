@@ -5,24 +5,40 @@ var crypto = require('crypto');
 
 const UserController = require("./Controllers/UserController");
 const LogController = require("./Controllers/LogController");
-const PaymentControlelr = require("./Controllers/PaymentController");
-
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "#gominho123",
-    database: "gagainsano"
-});
-  
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Conexão com banco de dados SQL bem sucedida!");
-});
+const PaymentControllr = require("./Controllers/PaymentController");
 
 /**
- * obtém o tempo atual
- * @returns {string} data no formato YYYY-MM-DD HH:MM:SS
+ * realiza a conexão com o banco de dados
+ * @param {string} database_name nome do banco de dados.
+ * @param {string} password  senha.
  */
+function connect_to_database(database_name, password){
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: password,
+        database: database_name
+    });
+    con.connect(function (err) {
+        if (err){
+            throw err;
+        } else {
+            console.log("Conexão com banco de dados SQL bem sucedida!");
+            LogController.register_log(con,
+                get_actual_date(),
+                LogController.activity_types.system_administration.sql_connection,
+                "conexão bem sucedida com o banco de dados"
+            );
+        }
+    });
+}
+
+connect_to_database("gagainsano", "#gominho123");
+
+/**
+* obtém o tempo atual
+* @returns {string} data no formato YYYY-MM-DD HH:MM:SS
+*/
 function get_actual_date() {
     var time_stamp = "";
 
@@ -35,8 +51,6 @@ function get_actual_date() {
         seconds = date_ob.getSeconds();
 
     time_stamp = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
-    
+
     return time_stamp;
 }
-
-app.listen(3030);

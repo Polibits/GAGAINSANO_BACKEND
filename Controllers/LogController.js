@@ -1,5 +1,6 @@
 /** atividades relacionadas à gestão do sistema */
-const system_testing = {
+const system_administration = {
+    sql_connection: "conexão com banco de dados",
     debug: "teste"
 }
 
@@ -20,7 +21,7 @@ const user_profile = {
 /**
  * armazena as diferentes atividades que o servidor executa
  */
-const activity_types = {system_acess, user_profile, system_testing};
+const activity_types = {system_acess, user_profile, system_administration};
 
 /**
  * registra uma atividade no painel de logs.
