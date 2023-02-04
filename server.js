@@ -7,13 +7,15 @@ const UserController = require("./Controllers/UserController");
 const LogController = require("./Controllers/LogController");
 const PaymentControllr = require("./Controllers/PaymentController");
 
+var con;
+
 /**
  * realiza a conexão com o banco de dados
  * @param {string} database_name nome do banco de dados.
  * @param {string} password  senha.
  */
 function connect_to_database(database_name, password){
-    var con = mysql.createConnection({
+    con = mysql.createConnection({
         host: "localhost",
         user: "root",
         password: password,

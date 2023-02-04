@@ -20,6 +20,26 @@ function add_user_credentials(con, email, password){
 };
 
 /**
+ * deleta dados do usuário da base de dados
+ * 
+ */
+function delete_user_credentials(con, email){
+    var search_condition = ["WHERE email = '", sha256(email), "'"].join("");
+    var sql_query = "DELETE FROM UserCredentials " + search_condition;
+    var sucess = false;
+
+    con.query(sql_query, function(error, result, fields) {
+        if(error) {
+            throw error;
+        } else {
+            console.log("deleção de credenciais de usuário bem sucedida");
+            console.log(result);
+        }
+        con.end();
+    });
+}
+
+/**
  * adiciona o usuário na tabela UserCredentials.
  * @param {string} con conexão com o banco de dados sql.
  * @param {string} email email informado pelo usuário.
@@ -39,7 +59,7 @@ function autheticate_credentials(con, email, password){
         } else {
             if(result[0].password == sha256(password + result[0].salt)){
                 console.log("autenticação bem sucedida!");
-                sucess = true;
+                return true;
             } else {
                 console.log("autenticação falha");
             }
@@ -60,4 +80,4 @@ function new_salt(length){
     .slice(0,length);
 };
 
-module.exports = {add_user_credentials, autheticate_credentials};
+module.exports = {add_user_credentials, autheticate_credentials, delete_user_credentials};
