@@ -7,6 +7,8 @@ const UserController = require("./Controllers/UserController");
 const LogController = require("./Controllers/LogController");
 const PaymentControllr = require("./Controllers/PaymentController");
 
+const EmailSender = require("./Controllers/EmailSender");
+
 var con;
 
 /**
@@ -36,6 +38,8 @@ function connect_to_database(database_name, password){
 }
 
 connect_to_database("gagainsano", "#gominho123");
+
+EmailSender.SendEmail();
 
 /**
 * obtém o tempo atual
