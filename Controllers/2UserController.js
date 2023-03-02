@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-
+//=========================================================================
 /**
  * adiciona o usuário na tabela UserCredentials.
  * @param {string} con conexão com o banco de dados sql.
