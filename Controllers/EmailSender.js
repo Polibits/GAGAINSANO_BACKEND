@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-var email_user = "";
+var email_user = "gui@gmail.com";
 var email_password = "";
 
 async function main(){

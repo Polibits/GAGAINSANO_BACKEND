@@ -5,30 +5,30 @@
     var crypto = require('crypto');
     const sequelize = require('sequelize')
 //==============================================================
-    const UserController = require("./Controllers/2UserController");
+    //const UserController = require("./Controllers/2UserController");
     const LogController = require("./Controllers/LogController");
     const PaymentControllr = require("./Controllers/PaymentController");
-    const EmailSender = require("./Controllers/EmailSender");
-    const connect_to_database = require('./db/conn');
+    //const EmailSender = require("./Controllers/EmailSender");
+    
 //==============================================================
 //=============Conexão com o banco de dados ====================
-    connect_to_database("gagainsano", "#gominho123");
+    const conn = require('./db/conn');
 
 //=============Importar Models  ===============================
-const UserModels = require('./models/user');
-const VideosModels = require('./models/videos');
+    const UserModels = require('./models/user');
+    const VideosModels = require('./models/videos');
 
 //==============================================================
 //============= Importando Rotas ==============================
-    const visitanteRoutes = require('./routes/visitanteRoutes');
-    const estudanteRoutes = require('./routes/estudanteRoutes')
-    const videosRoutes = require('./routes/videosRoutes')
-    const adminRoutes = require('./routes/adminRoutes')
+    //const visitanteRoutes = require('./routes/visitanteRoutes');
+    //const estudanteRoutes = require('./routes/estudanteRoutes')
+    //const videosRoutes = require('./routes/videosRoutes')
+    //const adminRoutes = require('./routes/adminRoutes')
 //============= Instanciar o Express ===========================
-    app.use('/' , visitanteRoutes );
+    //app.use('/' , visitanteRoutes );
 
 //==============================================================
-    EmailSender.SendEmail();
+    //EmailSender.SendEmail();
 /**
 * obtém o tempo atual
 * @returns {string} data no formato YYYY-MM-DD HH:MM:SS
@@ -52,7 +52,7 @@ function get_actual_date() {
 
 //Conexão Sync =======================================================
 
-conn.sync({ force: true})// colocar force: true ao alterar dados no BD
+conn.sync()// colocar force: true ao alterar dados no BD
 .then( ()=> {
     app.listen(3000)
 })

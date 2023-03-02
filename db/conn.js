@@ -1,30 +1,17 @@
-var con;
-const sequelize = require("sequelize");
-const mysql = require('mysql2')
-/**
- * realiza a conexão com o banco de dados
- * @param {string} database_name nome do banco de dados.
- * @param {string} password  senha.
- */
-const db = (gagadb, gaga123) => {
-    con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: 123,
-        database: gagadb
-    });
-    con.connect(function (err) {
-        if (err){
-            throw err;
-        } else {
-            console.log("Conexão com banco de dados SQL bem sucedida!");
-            LogController.register_log(con,
-                get_actual_date(),
-                LogController.activity_types.system_administration.sql_connection,
-                "conexão bem sucedida com o banco de dados"
-            );
-        }
-    });
+const {Sequelize} = require('sequelize')
+
+const sequelize = new Sequelize('gagadb' , 'gui' ,'guigui167', {
+    host: 'localhost' ,
+    dialect: 'mysql'
+})
+
+try {
+    sequelize.authenticate()
+    console.log("Conectamos com sucesso")
+} catch(err){
+    console.log("Não foi possível" + err)
 }
 
-module.exports = db
+
+
+module.exports = sequelize;
