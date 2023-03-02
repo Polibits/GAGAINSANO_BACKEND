@@ -20,12 +20,12 @@
 
 //==============================================================
 //============= Importando Rotas ==============================
-    //const visitanteRoutes = require('./routes/visitanteRoutes');
+    const visitanteRoutes = require('./routes/visitanteRoutes');
     //const estudanteRoutes = require('./routes/estudanteRoutes')
     //const videosRoutes = require('./routes/videosRoutes')
     //const adminRoutes = require('./routes/adminRoutes')
 //============= Instanciar o Express ===========================
-    //app.use('/' , visitanteRoutes );
+    app.use('/' , visitanteRoutes );
 
 //==============================================================
     //EmailSender.SendEmail();

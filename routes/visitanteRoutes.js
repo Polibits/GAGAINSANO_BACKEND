@@ -3,22 +3,22 @@ const express = require('express')
 const router = express.Router()
 const visitanteController = require('../Controllers/visitanteController');
 
-router.get('/home' , visitanteController);
+router.get('/home' , visitanteController.showHome);
 
-router.get('/login' , visitanteController);
+router.get('/login' , visitanteController.showLogin);
 
-router.get('/register' , visitanteController);
+router.get('/register' , visitanteController.showRegister);
 
-router.get('/cursos' , visitanteController);
+router.get('/cursos' , visitanteController.showCursos);
 
-router.get('/simulados' , visitanteController);
+router.get('/simulados' , visitanteController.showSimulados);
 
-router.get('/recados' , visitanteController);
+router.get('/recados' , visitanteController.showRecados);
 
-router.get('/perfil' , visitanteController);
+router.get('/perfil' , visitanteController.showPerfil);
 
-router.get('/materiaisgrat' , visitanteController);
+router.get('/materiaisgrat' , visitanteController.materiaisgrat);
 
-router.get('/olimpiadas' , visitanteController);
+router.get('/olimpiadas' , visitanteController.olimpiadas);
 
-router.get('/gagaresolve' , visitanteController);
+router.get('/gagaresolve' , visitanteController.gagaresolve);
