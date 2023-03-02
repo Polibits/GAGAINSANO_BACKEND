@@ -2,18 +2,18 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
-const User = db.define('User' , {
+const Videos = db.define('User' , {
     name: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    email: {
+    title: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    password: {
+    order: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
@@ -22,4 +22,4 @@ const User = db.define('User' , {
 
 })
 
-module.exports = User
+module.exports = Videos

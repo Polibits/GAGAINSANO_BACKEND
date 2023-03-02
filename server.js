@@ -48,4 +48,14 @@ function get_actual_date() {
 
     return time_stamp;
 }
-//=================================================================
+//====================================================================
+
+//Conexão Sync =======================================================
+
+conn.sync({ force: true})// colocar force: true ao alterar dados no BD
+.then( ()=> {
+    app.listen(3000)
+})
+.catch((err)=> {console.log(err)})
+
+//.sync({ force: true})===============================================

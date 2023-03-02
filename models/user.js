@@ -3,7 +3,12 @@ const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
 
 const User = db.define('User' , {
-    name: {
+    fullname: {
+        type: DataTypes.STRING ,
+        allowNull : false ,
+        require: true,
+    },
+    prefname: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
@@ -17,6 +22,16 @@ const User = db.define('User' , {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
+    },
+    CPF: {
+        type: DataTypes.STRING ,
+        allowNull : false ,
+        require: true,
+    },
+    usertype: {
+        type: DataTypes.STRING ,
+        allowNull : false ,
+        require: false,
     },
 
 

@@ -1,16 +1,17 @@
 var con;
-
+const sequelize = require("sequelize");
+const mysql = require('mysql2')
 /**
  * realiza a conexão com o banco de dados
  * @param {string} database_name nome do banco de dados.
  * @param {string} password  senha.
  */
-const connect_to_database = (database_name, password) => {
+const db = (gagadb, gaga123) => {
     con = mysql.createConnection({
         host: "localhost",
         user: "root",
-        password: password,
-        database: database_name
+        password: 123,
+        database: gagadb
     });
     con.connect(function (err) {
         if (err){
@@ -26,4 +27,4 @@ const connect_to_database = (database_name, password) => {
     });
 }
 
-module.exports = connect_to_database
+module.exports = db
