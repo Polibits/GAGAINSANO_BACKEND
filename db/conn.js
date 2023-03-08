@@ -1,5 +1,5 @@
 const {Sequelize} = require('sequelize')
-
+// nome do bd, user e senha!
 const sequelize = new Sequelize('gagadb' , 'gui' ,'guigui167', {
     host: 'localhost' ,
     dialect: 'mysql'

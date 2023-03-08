@@ -2,23 +2,13 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
-const User = db.define('User' , {
+const UserInfo = db.define('UserInfo' , {
     fullname: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
     prefname: {
-        type: DataTypes.STRING ,
-        allowNull : false ,
-        require: true,
-    },
-    email: {
-        type: DataTypes.STRING ,
-        allowNull : false ,
-        require: true,
-    },
-    password: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
@@ -30,11 +20,11 @@ const User = db.define('User' , {
     },
     usertype: {
         type: DataTypes.STRING ,
-        allowNull : false ,
+        allowNull : true ,
         require: false,
     },
 
 
 })
 
-module.exports = User
+module.exports = UserInfo

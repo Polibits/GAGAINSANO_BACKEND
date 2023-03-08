@@ -4,28 +4,34 @@
     var app = express();
     var crypto = require('crypto');
     const sequelize = require('sequelize')
+    const bodyParser = require('body-parser');
 //==============================================================
     //const UserController = require("./Controllers/2UserController");
     const LogController = require("./Controllers/LogController");
     const PaymentControllr = require("./Controllers/PaymentController");
     //const EmailSender = require("./Controllers/EmailSender");
+
+//==============================================================
+    app.use(express.json({limit: '200mb'}))
+    app.use(express.urlencoded({ extended: false, limit: '20mb' }))
     
 //==============================================================
 //=============Conexão com o banco de dados ====================
     const conn = require('./db/conn');
 
 //=============Importar Models  ===============================
-    const UserModels = require('./models/user');
+    const UserInfo = require("./models/userInfo");
+    const UserCred = require('./models/usercripto');
     const VideosModels = require('./models/videos');
 
 //==============================================================
 //============= Importando Rotas ==============================
-    //const visitanteRoutes = require('./routes/visitanteRoutes');
+    const visitanteRoutes = require('./routes/visitanteRoutes');
     //const estudanteRoutes = require('./routes/estudanteRoutes')
     //const videosRoutes = require('./routes/videosRoutes')
     //const adminRoutes = require('./routes/adminRoutes')
 //============= Instanciar o Express ===========================
-    //app.use('/' , visitanteRoutes );
+    app.use('/' , visitanteRoutes );
     //Só habilitar quando tiver pronto
 
 //==============================================================

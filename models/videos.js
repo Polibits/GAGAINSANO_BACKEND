@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
-const Videos = db.define('User' , {
+const Videos = db.define('Videos' , {
     name: {
         type: DataTypes.STRING ,
         allowNull : false ,
