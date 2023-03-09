@@ -23,6 +23,7 @@
     const UserInfo = require("./models/userInfo");
     const UserCred = require('./models/usercripto');
     const VideosModels = require('./models/videos');
+    const CourseAcess = require('./models/CourseAcess')
 
 //==============================================================
 //============= Importando Rotas ==============================

@@ -2,25 +2,29 @@
 const express = require('express')
 const router = express.Router()
 const visitanteController = require('../Controllers/visitanteController');
+const CourseController = require('../Controllers/CourseController');
+//======================================================================
+const auth = require
+//Login
+router.post('/login' , visitanteController.Login);
 
-//router.get('/home' , visitanteController.showHome);
+//Obter Informações ====================================================
+router.get('/getUserInfo' , visitanteController.getUserInfo)
 
-router.post('/login' , visitanteController.showLogin);
+//Autenticações ========================================================
+router.get('/authenticateCredentials')
+router.get('/getCourseAcessPermission')
 
-router.post('/register' , visitanteController.showRegister);
+//Rotas que registram ==================================================
+router.post('/register' , visitanteController.Register);
+router.post('/registerNewCourse', CourseController.registerNewCourse )
+router.post('/activateAccount')
+router.post('/contentUpload')
+router.post('/registerLog' , CourseController.registerLog);
 
-//router.get('/cursos' , visitanteController.showCursos);
+//Rotas que atualizam ==================================================
+router.put('/modifyCourseAcessPermission')
 
-//router.get('/simulados' , visitanteController.showSimulados);
 
-//router.get('/recados' , visitanteController.showRecados);
-
-//router.get('/perfil' , visitanteController.showPerfil);
-
-//router.get('/materiaisgrat' , visitanteController.materiaisgrat);
-
-//router.get('/olimpiadas' , visitanteController.olimpiadas);
-
-//router.get('/gagaresolve' , visitanteController.gagaresolve);
 
 module.exports = router

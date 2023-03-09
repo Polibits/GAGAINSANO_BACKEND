@@ -1,0 +1,140 @@
+-------------------------------- Tabelas SQL ----------------------------------
+
+UserCredentials: credenciais de acesso dos usuário, com hash + salting
+	-email: hash(email)
+	-password: hash(password + salt)
+	-salt: sequência aleatória de 64 caracteres
+	-activationCode: código de ativação de conta, de 6 caracteres
+	-activationDeadline: data máxima para ativação da conta
+	-activated: booleano que indica se a conta foi ou não ativada
+
+UserInfo: informações básicas do usuário
+	-ID: número de 8 caracteres que identifica os usuários
+	-fullName: nome completo do usuário
+	-preferedName: apelido ou nome curto, pelo qual ele deseja ser chamado
+	-email: email do usuário
+	-userType: tipo de usuário, dentre "admin", "student", "teacher" e "visitant"
+	-cpf: cpf do usuário
+
+PaymentHistoric: histórico de todos os pagamentos
+	-ID: id do usuário que solicitou o curso
+	-name: nome completo do usuário
+	-course: curso a ser pago
+	-price: preço do curso
+	-solicitationDate: data de solicitação do curso
+	-deadline: data máxima para pagamento
+	-paidDate: data em que o curso foi pago
+	-status: status atual do pagamento, dentre "paid", "waiting", "late" ou "canceled"
+
+CourseAcess: controla os acessos aos cursos
+	-UserID: id do usuário
+	-Course_1: se o usuário possui o curso 1
+	-Course_2: se o usuário possui o curso 2
+	-Course_3: se o usuário possui o curso 3
+	 ...
+	-CourseID_n: se o usuário possui o curso n
+
+	Para melhor exemplificar, a tabela poderia ficar assim:
+      	-------------------------------------------------------------------------------
+		|  UserID  | gaga-insano-fisica | gaga-insano-matematica | gaga-insano-fuvest |
+      	-------------------------------------------------------------------------------
+      	| 12345678 |         yes        |            no          |         yes        |
+		| 87654321 |         no         |            no          |         yes        |
+		| 12341234 |         no         |            no          |         no         |
+		-------------------------------------------------------------------------------
+
+CourseInfo: informações básicas de todos os cursos
+	-ID: id do curso no formato "gagainsano-militares-fisica" (minúsculo, sem acentos e separado por hífen)
+	-name: nome comercial do curso, como "Física para Vestibulares Militares"
+	-description: descrição breve do curso
+	-contentRoute: rota usada para acessar os arquivos do curso
+
+Log:
+	-date: data da atividade
+	-type: tipo de atividade, dentre as opções:
+      	(a) user register
+      	(b) user deletion
+      	(c) user update
+      	(d) login
+      	(e) logout
+      	(f) course payment solicitation
+      	(g) course payment
+      	(h) course unsubscribe
+      	(i) course acess liberation
+      	(j) course acess block
+	-description: descrição breve do que aconteceu
+
+CourseContent-nome-do-curso: tem os caminhos dos arquivos no backend
+	-chapterNumber: número do capítulo
+	-chapterName: nome do capítulos
+	-topicNumber: número do tópico
+	-topicName: nome do tópico
+	-videoPath: caminho do arquivo de vídeo de cada tópico no backend
+	--------------------------------------------------------------------------------------------------------------
+	|                                    CourseContent-fisica-militares                                          |
+	--------------------------------------------------------------------------------------------------------------
+	|    chapterName    | topicNumber |      topicName      |                   videoPath                        |
+	--------------------------------------------------------------------------------------------------------------
+	|    Cinemática     |      1      |         MRU         | fisica-militares/videos/1-cinematica-mru.mp4       |
+	|    Cinemática     |      2      |         MRUV        | fisica-militares/videos/2-cinematica-mruv.mp4      |
+	|    Cinemática     |      3      |         MCU         | fisica-militares/videos/3-cinematica-mcu.mp4       |
+	|     Dinâmica      |      4      |    Leis de Newton   | fisica-militares/videos/4-dinamica-newton.mp4      |
+	|     Dinâmica      |      5      |        Atrito       | fisica-militares/videos/5-dinamica-atrito.mp4      |
+	|     Estática      |      6      |       Equilíbrio    | fisica-militares/videos/6-estatica-equilibrio.mp4  |
+	|     Estática      |      7      |   Teorema de Lamy   | fisica-militares/videos/7-estatica-lamy.mp4        |
+	|     Estática      |      8      |        Torques      | fisica-militares/videos/8-estatica-torques.mp4     |
+	--------------------------------------------------------------------------------------------------------------
+
+-------------------------------- Funcionamento do sistema ---------------------------------
+
+1. Cadastro de Usuário:
+	-Usuário informa: nome completo, apelido, email, senha e cpf
+	-Sistema faz verificações:
+		(a) email não deve existir no database
+		(b) cpf não deve existir no database
+		(c) senha deve respeitar limite mínimo de 10 caracteres
+		(d) campos com risco de SQL injection (proibido caracteres como "'", "=", "OR" etc.)
+	-Respostas possíveis são:
+		(a) email já cadastrado
+		(b) cpf já cadastrado
+		(c) senha fraca
+	-Sistema registra as informações nas tabelas de UserCredentials da seguinte forma:
+		(a) Gera-se um salt de 64 caracteres em UserCredentials
+		(b) Registra-se hash(email) e hash(password + salt) em UserCredentials
+		(c) Gera-se um código de ativação de 6 caracteres, que será enviado pelo email do usuário
+		(d) Por padrão, "activated" será "no" e passará a ser "yes" quando o usuário ativar a conta
+		(e) prazo de ativação de um dia
+	-Sistema registra as informações comuns na tabela UserInfo
+		(a) Gera-se um id de 8 números para cada usuário, que deve ser único
+		(b) Por padrão, todos tem userType="student"; isso pode ser mudado somente pelo adm
+	-Se o prazo para ativação expirar, deletar informações so usuário de todas as tabelas
+
+2. Login de Usuário:
+	-Usuário informa email e senha
+	-Sistema verifica caracteres de SQL injection
+	-Consulta-se a existência do hash(email)
+	-Caso exista, toma-se o hash(senha informada pelo usuário + salt da tabela)
+	-Verificar se o hash(password + salt) correspondem
+	-Autorizar login caso haja correspondência
+	-Usar o email do usuário para buscar seu ID e, com isso, carregar suas informações pessoais
+	-As possibilidades são as seguintes:
+		(a) Sucesso: email e senha são autênticos
+		(b) Email inexistente: email não registrado na base de dados
+		(c) Senha incorreta: senha não corresponde ao que estava registrado
+
+3. Update de Usuário
+	-Usuário escolhe informações a serem mudadas, dentre as seguintes possibilidades:
+		(a) email: deve ser diferente dos emails do database
+		(b) senha: exigências de senha forte
+		(c) fullName: sem restrições
+		(d) preferedName: sem restrições
+		(e) cpf: deve ser único
+	-Se tudo está em conformidade, fazer alterações
+
+4. Pagamento de Cursos
+
+5. Acesso ao Curso
+	-O sistema faz uma requisição
+	-
+6. 
+	

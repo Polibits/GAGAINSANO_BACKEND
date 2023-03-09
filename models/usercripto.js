@@ -33,6 +33,11 @@ const UserCred = db.define('UserCred' , {
         allowNull : true ,
         require: false,
     },
+    UserId: {
+        type: DataTypes.STRING ,
+        allowNull : false ,
+        require: true,
+    },
 
 
 

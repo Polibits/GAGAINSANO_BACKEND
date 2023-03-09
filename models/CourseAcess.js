@@ -2,34 +2,30 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
-const UserInfo = db.define('UserInfo' , {
-    fullname: {
+const CourseAcess = db.define('CourseAcess' , {
+    UserId : {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    prefname: {
-        type: DataTypes.STRING ,
+    gaga_insano_fisica: {
+        type: DataTypes.BOOLEAN ,
         allowNull : false ,
         require: true,
     },
-    CPF: {
-        type: DataTypes.STRING ,
+    gaga_insano_matematica: {
+        type: DataTypes.BOOLEAN ,
         allowNull : false ,
         require: true,
     },
-    usertype: {
-        type: DataTypes.STRING ,
+    gaga_insano_fuvest: {
+        type: DataTypes.BOOLEAN ,
         allowNull : true ,
         require: false,
     },
-    UserId: {
-        type: DataTypes.STRING ,
-        allowNull : false ,
-        require: true,
-    },
+    
 
 
 })
 
-module.exports = UserInfo
+module.exports = CourseAcess

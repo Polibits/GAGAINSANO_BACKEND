@@ -1,0 +1,146 @@
+Operações:
+1. Registrar Usuário (registerUser)
+2. Autenticação de Credenciais Usuário (authenticateCredentials)
+3. Ativação de conta (activateAccount)
+4. Obtenção de Informações do Usuário (getUserInfo)
+5. Verificar Permissão de Acesso ao Curso (getCourseAcessPermission)
+6. Modificar Acesso ao Curso (modifyCourseAcessPermission)
+7. Registrar Novo Curso (registerNewCourse)
+8. Obter Informações do Curso (getCourseInfo)
+9. Upload de Conteúdo (contentUpload)
+10. Registrar Log (registerLog)
+
+1. Registrar Usuário (registerUser)
+	-Entradas: {fullName, preferedName, email, password, cpf}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: usuário registrado com sucesso
+		(b) email já cadastrado: email já presente na base de dados
+		(c) cpf já cadastrado: cpf já existente na base de dados
+		(d) erro: não foi possível realizar a operação
+	-Operações:
+		(a) registrar usuário na tabela UserCredentials
+		(b) registrar usuário na tabela UserInfo
+		(c) registrar nova coluna em CourseAcess
+		(d) enviar email com código de ativação
+
+2. Autenticação de Credenciais Usuário (authenticateCredentials)
+	-Entradas: {email, password}
+	-Retorno: {response, ID}
+	-Respostas:
+		(a) sucesso: login efetuado com sucesso
+		(b) email não cadastrado: email não está cadastrado
+		(c) senha incorreta: email existe, mas senha errada
+		(d) erro: não foi possível realizar a operação
+	-Operações:
+		(a) consultar tabela UserCredentials
+
+3. Ativação de conta (activateAccount)
+	-Entradas: {email, activationCode}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: conta ativada com sucesso
+		(b) código incorreto: código não corresponde ao enviado pelo email
+		(c) email não encontrado: email não existe na base de dados
+		(d) erro: não foi possível realizar a operação
+	-Operações:
+		(a) Alterar o campo "activated" de UserCredentials para "true"
+
+4. Obtenção de Informações do Usuário (getUserInfo)
+	-Entradas: {ID}
+	-Retorno: {response, email, fullName, preferedName, email, password, cpf}
+	-Respostas:
+		(a) sucesso: obtenção bem sucedida das informações
+		(b) id não cadastrado: id não foi encontrado na tabela
+		(c) erro: não foi possível realizar a operação
+	-Operações:
+		(a) consultar tabela UserInfo
+
+5. Verificar Permissão de Acesso ao Curso (getCourseAcessPermission)
+	-Entradas: {ID, courseID}
+	-Retorno: {response, acessPermission}
+		(a) acessPermission é um booleano; true para possui acesso e false caso contrário
+	-Respostas:
+		(a) sucesso: consulta bem sucedida
+		(b) id não cadastrado
+		(c) erro: não foi possível realizar operação
+	-Operações:
+		(a) consultar tabela CourseAcess
+
+6. Modificar Acesso ao Curso (modifyCourseAcessPermission)
+	-Entradas: {ID, courseID, acessPermission}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: permissão alterada com sucesso
+		(b) id não cadastrado: id não foi encontrado na tabela
+		(c) erro: não foi possível realizar operação
+	-Operações:
+		(a) modificar tabela CourseAcess na linha do estudante e coluna do curso
+
+7. Registrar Novo Curso (registerNewCourse)
+	-Entradas: {ID, name, description}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: curso registrado com sucesso
+		(b) erro: não foi possível realizar operação
+	-Operações:
+		(a) registrar curso em CourseInfo
+		(b) criar diretório no backend para aquele curso
+		(c) criar uma tabela "CourseContent-nome-do-curso"
+
+8. Obter Informações do Curso (getCourseInfo)
+	-Entradas: {courseID}
+	-Retorno: {response, ID, name, description, contentRoute}
+	-Respostas:
+		(a) sucesso: informações obtidas com sucesso
+		(b) id não cadastrado: id não encontrado na base de dados
+	-Operações:
+		(a) consultar tabela CourseInfo
+		(b) 
+
+9. Upload de Conteúdo (contentUpload)
+	-Entradas: {courseID, content}
+		(a) content é um objeto que possui os capítulos e os vídeos:
+			content = {chapters}
+		(b) chapter é um objeto que representa um capítulo:
+			chapter = {chapterName, topics}
+		(c) topic é um objeto que representa um tópico:
+			topic = {topicName, video}
+		Exemplo:
+			content = {
+				chapter_01: {
+					chapterName: "Cinemática",
+					topics: {
+						topic_01: {"Movimento Retilíneo Uniforme", mru.mp4}
+						topic_02: {"Movimento Retilíneo Uniformemente Variado", mruv.mp4}
+						topic_03: {"Movimento Circular Uniforme", mcu.mp4}
+					},
+					chapterName: "Dinâmica",
+					topics: {
+						topic_01: {"Leis de Newton parte I)", leis-de-newton-pt1.mp4}
+						topic_02: {"Leis de Newton parte II", leis-de-newton-pt2.mp4}
+						topic_03: {"Atrito", atrito.mp4}
+					}
+				},
+			}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: upload feito com sucesso
+		(b) erro: não foi possível realizar operação
+	-Operações:
+		(a) Enviar arquivos de vídeo para pasta no backend
+		(b) Registrar capítulos e diretórios na tabela "CourseContent-nome-do-curso"
+
+10. Registrar Log (registerLog)
+	-Entradas: {date, type, description}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: informações obtidas com sucesso
+		(b) erro: não foi possível realizar operação
+	-Operações:
+		(a) registrar log na tabela Log
+
+
+
+
+
