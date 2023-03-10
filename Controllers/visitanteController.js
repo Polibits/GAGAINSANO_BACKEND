@@ -20,63 +20,69 @@ function new_salt(length) {
     .slice(0, length);
 }
 //===================== Função de achar o seu Email ========================
-async function findEmail(email) {
-  const usersInDB = await UserCred.findOne({
+ function findEmail(email) {
+  const usersInDB =  UserCred.findOne({
     where: {
       email: sha256(email),
     },
     raw: true,
   });
-  if(usersInDB){
-    return true;
-  }else{
-    return false;
-  }
+
+    if(usersInDB){
+      return true;
+    }else{
+      return false;
+    }
 }
 //=========================== Achar CPF ==========================
-async function findCPF(cpf){
-  const usersInDB = await UserCred.findOne({
+function findCPF(cpf){
+  const usersInDB =  UserInfo.findOne({
     where: {
       CPF: cpf,
     },
     raw: true,
-  });
-  if(usersInDB){
-    return true;
-  }else{
-    return false;
-}}
-//======================== Gerar UserId ==========================
-async function newUserID(){
-  let userID;
-  do{
-     userID = (Math.floor(Math.random() * 100000000) + 1).toString;
+  }).then(result => {
+    if(result){
+      return true;
+    }else{
+      return false;
+      }
+  })
+  return false;
   }
-  while(findId(userID))
-
+//======================== Gerar UserId ==========================
+  function newUserID(){
+    let userID
+    do{
+       userID = (Math.floor(Math.random() * 100000000) + 1).toString();
+       console.log("AQUI" + findId(userID))
+    }while(findId(userID))
+    
   return userID;
 
 }
 
 //======================= Achar id do usuário ====================
-async function findId(id){
-  const usersInDB = await UserCred.findOne({
+   function findId(id){
+   UserCred.findOne({
     where: {
       UserId: id,
     },
     raw: true,
-  });
-  if(usersInDB){
-    return true
-  }else{
-    return false
-  }
+  }).then(result => {
+    if(result){
+      return true
+    }else{
+      return false
+    }
+  })
+  return false;
 }
 
 
 //=================================================================
 
-//===================== Função de achar o seu Email ======
+//===================== Função de achar o seu User ======
 async function findUser(email) {
     const usersInDB = await UserCred.findOne({
       where: {
@@ -139,9 +145,14 @@ class visitanteController {
   }
 
   static async Register(req, res) {
+    console.log("TESTANDO CPF E EMAIL")
+    console.log(findCPF(req.body.cpf))
+    console.log(findEmail(req.body.email))
+    console.log("TESTANDO CPF E EMAIL")
     //===================================
     //=========== UserID ================
     const UserId = newUserID();
+    console.log("=================" + UserId)
     //===================================
     //User Infos ========================
     const fullname = req.body.fullname;
@@ -150,13 +161,15 @@ class visitanteController {
     const email = req.body.email;
     const CPF = req.body.cpf;
 
-    
-    if(findEmail(email) && findCPF(CPF)){
+    if(findEmail(email)){
       res.status(400)
-      res.send({message:"Email/CPF Já Cadastrado",
+      res.send({message:"Email Já Cadastrado",
       code:"email_already_registered"});
+    }else if(findCPF(CPF) == true){
+      res.send({message:"CPF Já Cadastrado",
+      code:"cpf_already_registered"});
     }else{
-    const hashEmail = sha256(email);
+      const hashEmail = sha256(email);
     const salt = new_salt(saltLength);
     const password = req.body.password;
     const hashPassword = sha256(salt + password);
@@ -194,9 +207,8 @@ class visitanteController {
       console.log(err);
     }
 
-
     }
-    
+  
   }
 
 
