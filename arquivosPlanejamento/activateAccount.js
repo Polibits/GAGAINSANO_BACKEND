@@ -58,16 +58,9 @@ async function ActivateAccount(email, activationCode){
             }catch(e){
                 console.log(e)
             }
-
-
-
         }else{//Esse Else é do VerifyActivateAcc
             console.log("código incorreto: código não corresponde ao enviado pelo email")
         }
-
-
-
-
     }else{//Esse Else é do findEmail
         console.log("email não encontrado: email não existe na base de dados")
     }

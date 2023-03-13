@@ -1,9 +1,8 @@
-/*
 const UserInfo = require("../models/userInfo");
 const UserCred = require("../models/usercripto");
 const CourseAcess = require("../models/CourseAcess");
 const Videos = require("../models/videos");
-*/
+
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const crypto = require("crypto");
@@ -21,6 +20,7 @@ const userIDLenght = 8;
 
 // rota para crição de usuário
 function createUser(fullName, preferedName, email, password, cpf) {
+
     if(userEmailExists(email) == true){
         // mandar resposta email já existe
     } else if(userCPFExists(cpf) == true){
@@ -52,40 +52,64 @@ function createUser(fullName, preferedName, email, password, cpf) {
  * @param {string} cpf cpf do usuário
  * @returns nada
  */
-function registerUser(fullName, preferedName, email, password, cpf) {
+async function registerUser(fullName, preferedName, email, password, cpf) {
+    //========= Adquirir Credenciais ===========//
+    //=========== UserID =======================//
+    const UserId = newUserID();
+    //==========================================//
+    //========== User Infos ====================//
+    const fullname = req.body.fullname;
+    const preferedName = req.body.prefname;
+    const email = req.body.email;
+    const CPF = req.body.cpf;
+    //==========================================//
     /* Registro das Credenciais */
     const defaultUserType = 'student';
     const salt = newSalt(saltLength);
+    //=========== Criptografar Dados ===========//
+    const SHAemail = sha256(email)
+    const SHApassword = sha256(password + salt);
+    //=========== Activation Status ============//
     const activationCode = randomString(activationCodeLenght);
     const activationDeadline = ""; //TODO
     const activated = false;
+    //====== Autenticar Email e cpf ============//
 
-    userCredentials = {
-        "email": sha256(email),
-        "password": sha256(password),
+    const userCredentials = {
+        "email": SHAemail,
+        "password": SHApassword,
         "salt": salt,
         "activationCode": activationCode,
         "activationDeadline": activationDeadline,
         "activated": activated
     }
-
-    // TODO registrar na tabela UserCredentials
-
-    /* Registro do perfil */
-    userInfo = {
-        "ID": newUserID(),
-        "fullName": fullName,
+    const userInfo = {
+        "ID": UserId,
+        "fullName": fullname,
         "preferedName": preferedName,
-        "email": email,
+        "email": SHAemail,
         "userType": defaultUserType,
-        "cpf": cpf
+        "cpf": CPF
     }
+    const userCourseAcess = {
+        UserId: UserId,
+        gaga_insano_fisica: false,
+        gaga_insano_matematica: false,
+        gaga_insano_fuvest: false,
+      };
 
-    // TODO registrar na UserInfo
-
-    /* Registro do Acesso do Usuário */
-
-    // TODO registrar na tabela CourseAcess
+      try {
+        const createdUserInfo = await UserInfo.create(userInfo);
+        const createdUserCred = await UserCred.create(userCredentials);
+        const createdUserCA = await CourseAcess.create(userCourseAcess);
+        console.log(createdUserInfo, createdUserCred, createdUserCA);
+        res.status(200);
+        res.send({message:"Usuário registrado com sucesso",
+                  code:"sucess"});
+      
+      } catch (err) {
+        console.log(err);
+      }
     return;
 }
 
@@ -97,13 +121,11 @@ function registerUser(fullName, preferedName, email, password, cpf) {
  */
 function authenticateCredentials(email, password) {
     var valid = false;
-
     /* verificar se email existe */
     if(userEmailExists(email)) {
-        /* veririficar se senha bate */
-        // TODO get password
-        const databasePassword = "";
-        const salt = "";
+        const user = findUser(email);
+        const databasePassword = user.password;
+        const salt = user.salt;
         if(sha256(password + salt) == databasePassword)
             valid = true;
         else
@@ -114,16 +136,38 @@ function authenticateCredentials(email, password) {
     console.log(valid);
     return valid;
 }
+//========================================================================//
+
 
 /**
  * 
  * @param {string} email email do usuário
  * @returns 
  */
-function activateAccount(email) {
-    // TODO modificar tabela sql
-    return;
+//===================== ACTIVATE ACCOUNT =================================//
+//function activateAccount(email) {
+//    return;
+//}
+if(findEmail(email)){
+    console.log("Email Encontrado")
+    if(verifyActivateAccountCode(activationCode)){
+        //============= Achar o usuário do email dado =============
+        const User = findUser(email)
+        const userUpdate = {activated: true}
+        try{
+            await User.update(userUpdate)
+            console.log('sucesso: conta ativada com sucesso')
+        }catch(e){
+            console.log(e)
+        }
+    }else{//Esse Else é do VerifyActivateAcc
+        console.log("código incorreto: código não corresponde ao enviado pelo email")
+    }
+}else{//Esse Else é do findEmail
+    console.log("email não encontrado: email não existe na base de dados")
 }
+
+//=============================================================================
 
 function getUserInfo(userID) {
     var user = {
@@ -166,14 +210,28 @@ function newUserID() {
 
     return newID;
 }
-
-function userEmailExists() {
+//============ Verificar se Email Existe no UserCredentials ============//
+function userEmailExists(email) {
     var exists = false;
-
-    // TODO verificar se email existe
-
+    const usersInDB =  UserCred.findOne({
+        where: { email: sha256(email)}});
+    if(usersInDB){
+        exists = true;
+    }else{exists = false;}
     return exists;
 }
+//=========== Informações do User com Email ================================//
+//===================== Função de achar o seu User ======
+async function findUser(email) {
+    const usersInDB = await UserCred.findOne({
+      where: {
+        email: sha256(email),},
+      raw: true,});
+//= Método para transformar Objeto em Json String
+    const userInDBJson = JSON.parse(JSON.stringify(usersInDB));
+    return userInDBJson;
+  }
+
 
 function sha256(content) {
     return crypto.createHash("sha256").update(content).digest("hex");

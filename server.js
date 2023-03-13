@@ -10,11 +10,9 @@
     const LogController = require("./Controllers/LogController");
     const PaymentControllr = require("./Controllers/PaymentController");
     //const EmailSender = require("./Controllers/EmailSender");
-
 //==============================================================
     app.use(express.json({limit: '200mb'}))
     app.use(express.urlencoded({ extended: false, limit: '20mb' }))
-    
 //==============================================================
 //=============Conexão com o banco de dados ====================
     const conn = require('./db/conn');
@@ -27,12 +25,12 @@
 
 //==============================================================
 //============= Importando Rotas ==============================
-    const visitanteRoutes = require('./routes/visitanteRoutes');
+    const userRoutes = require('./routes/userRoutes');
     //const estudanteRoutes = require('./routes/estudanteRoutes')
     //const videosRoutes = require('./routes/videosRoutes')
     //const adminRoutes = require('./routes/adminRoutes')
 //============= Instanciar o Express ===========================
-    app.use('/' , visitanteRoutes );
+    app.use('/' , userRoutes );
     //Só habilitar quando tiver pronto
 
 //==============================================================
