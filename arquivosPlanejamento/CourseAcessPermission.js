@@ -110,12 +110,7 @@ async function getCourseAcessPermission(ID, courseID){
         default:
           console.log(courseID + "Não existe")
           break
-        
-        
       }
-
-
-
 }
 
 

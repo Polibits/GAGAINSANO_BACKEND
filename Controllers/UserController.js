@@ -11,29 +11,6 @@ const saltLength = 64;
 const activationCodeLenght = 6;
 const userIDLenght = 8;
 
-/*
-1. Registrar Usuário (registerUser)
-2. Autenticação de Credenciais Usuário (authenticateCredentials)
-3. Ativação de conta (activateAccount)
-4. Obtenção de Informações do Usuário (getUserInfo)
-*/
-
-// rota para crição de usuário
-function createUser(fullName, preferedName, email, password, cpf) {
-
-    if(userEmailExists(email) == true){
-        // mandar resposta email já existe
-    } else if(userCPFExists(cpf) == true){
-        // mandar resposta cpf já existe
-    }
-    try {
-        registerUser(fullName, preferedName, email, password, cpf);
-    } catch (error) {
-        // mandar resposta deu erro
-    }
-    // mandar resposta sucesso
-}
-
 /**
  * OPERAÇÕES DE ALTO NÍVEL
  * registerUser
@@ -52,64 +29,75 @@ function createUser(fullName, preferedName, email, password, cpf) {
  * @param {string} cpf cpf do usuário
  * @returns nada
  */
-async function registerUser(fullName, preferedName, email, password, cpf) {
-    //========= Adquirir Credenciais ===========//
-    //=========== UserID =======================//
-    const UserId = newUserID();
-    //==========================================//
-    //========== User Infos ====================//
-    const fullname = req.body.fullname;
-    const preferedName = req.body.prefname;
-    const email = req.body.email;
-    const CPF = req.body.cpf;
-    //==========================================//
+function registerUser(fullName, preferedName, email, password, cpf) {
     /* Registro das Credenciais */
+    const UserId = newUserID();
     const defaultUserType = 'student';
+
+    /* Criptografar dados */
     const salt = newSalt(saltLength);
-    //=========== Criptografar Dados ===========//
     const SHAemail = sha256(email)
     const SHApassword = sha256(password + salt);
-    //=========== Activation Status ============//
+    
+    /* Activation Status */
     const activationCode = randomString(activationCodeLenght);
     const activationDeadline = ""; //TODO
     const activated = false;
-    //====== Autenticar Email e cpf ============//
 
     const userCredentials = {
         "email": SHAemail,
         "password": SHApassword,
         "salt": salt,
         "activationCode": activationCode,
-        "activationDeadline": activationDeadline,
-        "activated": activated
+        //"activationDeadline": activationDeadline,
+        "activated": activated,
+        "UserId" : UserId
     }
+
     const userInfo = {
-        "ID": UserId,
-        "fullName": fullname,
+        "UserId": UserId,
+        "fullName": fullName,
         "preferedName": preferedName,
-        "email": SHAemail,
+        "email": email,
         "userType": defaultUserType,
-        "cpf": CPF
+        "cpf": cpf
     }
+
     const userCourseAcess = {
         UserId: UserId,
         gaga_insano_fisica: false,
         gaga_insano_matematica: false,
         gaga_insano_fuvest: false,
-      };
+    };
 
-      try {
-        const createdUserInfo = await UserInfo.create(userInfo);
-        const createdUserCred = await UserCred.create(userCredentials);
-        const createdUserCA = await CourseAcess.create(userCourseAcess);
-        console.log(createdUserInfo, createdUserCred, createdUserCA);
-        res.status(200);
-        res.send({message:"Usuário registrado com sucesso",
-                  code:"sucess"});
-      
-      } catch (err) {
-        console.log(err);
-      }
+    console.log(userCredentials);
+    console.log(userInfo);
+    console.log(userCourseAcess);
+
+    // tentar registrar credenciais em UserCredentials
+    try {
+        const createdUserCred =  UserCred.create(userCredentials);
+        
+    } catch (error) {
+        throw error;
+    }
+
+    // tentar registrar informações em UserInfo
+    try {
+        createdUserInfo =  UserInfo.create(userInfo);
+    } catch (error) {
+        throw error;
+    }
+
+    // tentar registrar usuário em userCourseAcess
+    try {
+        // registro bem sucedido de credenciais
+        const createdUserCA = CourseAcess.create(userCourseAcess);
+    } catch (error) {
+        // registro bem sucedido de credenciais
+        throw error;
+    }
+
     return;
 }
 
@@ -121,63 +109,59 @@ async function registerUser(fullName, preferedName, email, password, cpf) {
  */
 function authenticateCredentials(email, password) {
     var valid = false;
-    /* verificar se email existe */
-    if(userEmailExists(email)) {
-        const user = findUser(email);
-        const databasePassword = user.password;
-        const salt = user.salt;
-        if(sha256(password + salt) == databasePassword)
-            valid = true;
-        else
-            valid = false;
-    }else
+    
+    const user = findUser(email);
+    const databasePassword = user.password;
+    const salt = user.salt;
+
+    if(sha256(password + salt) == databasePassword)
+        valid = true;
+    else
         valid = false;
 
-    console.log(valid);
     return valid;
 }
-//========================================================================//
-
 
 /**
- * 
+ * Ativar conta
  * @param {string} email email do usuário
- * @returns 
+ * @returns nada
  */
-//===================== ACTIVATE ACCOUNT =================================//
-//function activateAccount(email) {
-//    return;
-//}
-if(findEmail(email)){
-    console.log("Email Encontrado")
-    if(verifyActivateAccountCode(activationCode)){
-        //============= Achar o usuário do email dado =============
-        const User = findUser(email)
-        const userUpdate = {activated: true}
-        try{
-            await User.update(userUpdate)
-            console.log('sucesso: conta ativada com sucesso')
-        }catch(e){
-            console.log(e)
-        }
-    }else{//Esse Else é do VerifyActivateAcc
-        console.log("código incorreto: código não corresponde ao enviado pelo email")
+function activateAccount(email) {
+    const User = findUser(email)
+    const userUpdate = {activated: true}
+
+    try{
+        User.update(userUpdate)
+    }catch(error){
+        throw error;
     }
-}else{//Esse Else é do findEmail
-    console.log("email não encontrado: email não existe na base de dados")
+    
+    return;
 }
 
-//=============================================================================
 
 function getUserInfo(userID) {
+    const usersCred = UserCred.findOne({
+        where: {
+            userID: userID,
+        },
+        raw: true,
+      });
+    const usersInfo = UserInfo.findOne({
+        where: {
+            userID: userID,
+        },
+        raw: true,
+      });
+
     var user = {
         "response": "", 
-        "email": "", 
-        "fullName": "", 
-        "preferedName": "", 
-        "email": "", 
-        "password": "", 
-        "cpf": ""
+        "email": usersCred.email, 
+        "fullName": usersInfo.fullname, 
+        "preferedName": usersInfo.preferedName,  
+        "password": usersCred.password, 
+        "cpf": usersInfo.CPF
     };
 
     return user;
@@ -210,28 +194,44 @@ function newUserID() {
 
     return newID;
 }
-//============ Verificar se Email Existe no UserCredentials ============//
+
+/**
+ * @param {string} email email do usuário
+ * @returns {boolean} verdadeiro se email existe e falso caso contrário
+ */
 function userEmailExists(email) {
     var exists = false;
     const usersInDB =  UserCred.findOne({
         where: { email: sha256(email)}});
     if(usersInDB){
         exists = true;
-    }else{exists = false;}
+    }else{
+        exists = false;
+    }
     return exists;
 }
-//=========== Informações do User com Email ================================//
-//===================== Função de achar o seu User ======
+
+/**
+ * @param {string} cpf cpf do usuário
+ * @returns {boolean} verdadeiro se cpf existe e falso caso contrário
+ */
+function userCPFExists(cpf) {
+    var exists = true;
+    // TODO implemen
+    return exists;
+}
+
+// Informações do User com Email //
+// Função de achar o seu User //
 async function findUser(email) {
     const usersInDB = await UserCred.findOne({
-      where: {
-        email: sha256(email),},
-      raw: true,});
-//= Método para transformar Objeto em Json String
+        where: {email: sha256(email)},
+            raw: true,
+        });
+    // Método para transformar Objeto em Json String
     const userInDBJson = JSON.parse(JSON.stringify(usersInDB));
     return userInDBJson;
-  }
-
+}
 
 function sha256(content) {
     return crypto.createHash("sha256").update(content).digest("hex");
@@ -263,5 +263,6 @@ module.exports = {
     registerUser,
     authenticateCredentials,
     activateAccount,
-    getUserInfo
+    getUserInfo,
+    userEmailExists
 };

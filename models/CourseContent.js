@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
 
 const CourseContent = db.define('CourseContent' , {
-    Id : {
+    IdCourse : {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,

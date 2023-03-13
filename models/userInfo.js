@@ -3,22 +3,22 @@ const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
 
 const UserInfo = db.define('UserInfo' , {
-    fullname: {
+    fullName: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    prefname: {
+    preferedName: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    CPF: {
+    cpf: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
     },
-    usertype: {
+    userType: {
         type: DataTypes.STRING ,
         allowNull : true ,
         require: false,

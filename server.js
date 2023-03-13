@@ -58,7 +58,7 @@ function get_actual_date() {
 
 //Conexão Sync =======================================================
 
-conn.sync()// colocar force: true ao alterar dados no BD
+conn.sync({ force: true})// colocar force: true ao alterar dados no BD
 .then( ()=> {
     app.listen(3000)
 })

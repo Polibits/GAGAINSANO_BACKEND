@@ -116,18 +116,14 @@ async function registerNewCourse(ID, name, description){
         console.log('sucesso: curso registrado com sucesso')
                 //Verifica se não existe
                     if (!fs.existsSync(name)){
-                        //Efetua a criação do diretório
-                        fs.mkdir(name, (err) => {
-                            if (err) {
-                            console.log("Deu ruim...");
-                                return
-                            }else{
-                                console.log("Diretório criado! =) o nome dele é" + name)
-                            }
-
-                        
-    });
-}
+                    //Efetua a criação do diretório
+                    fs.mkdir(name, (err) => {
+                      if (err) {
+                        console.log("Deu ruim...");
+                         return
+                        }else{
+                         console.log("Diretório criado! =) o nome dele é" + name)
+                      }});}
     }catch(e){
         console.log(e)
         console.log("erro: não foi possível realizar operação")

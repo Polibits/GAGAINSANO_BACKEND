@@ -19,7 +19,7 @@ const UserCred = db.define('UserCred' , {
         require: false,
     },
     activationCode: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull : true,
         require: false,
     },
@@ -38,10 +38,6 @@ const UserCred = db.define('UserCred' , {
         allowNull : false ,
         require: true,
     },
-
-
-
-
 })
 
 module.exports = UserCred
