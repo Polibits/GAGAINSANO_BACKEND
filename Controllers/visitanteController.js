@@ -219,4 +219,3 @@ class visitanteController {
 
 }
 
-module.exports = visitanteController;

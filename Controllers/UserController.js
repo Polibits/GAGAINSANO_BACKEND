@@ -202,11 +202,12 @@ function newUserID() {
 function userEmailExists(email) {
     var exists = false;
     const usersInDB =  UserCred.findOne({
-        where: { email: sha256(email)}});
-    if(usersInDB){
-        exists = true;
+        where: { email: sha256(email)}})
+        
+    if (typeof usersInDB != "undefined" && usersInDB != null) {
+         exists = true;
     }else{
-        exists = false;
+        exists= false;
     }
     return exists;
 }
@@ -216,7 +217,7 @@ function userEmailExists(email) {
  * @returns {boolean} verdadeiro se cpf existe e falso caso contrário
  */
 function userCPFExists(cpf) {
-    var exists = true;
+    var exists = false;
     // TODO implemen
     return exists;
 }

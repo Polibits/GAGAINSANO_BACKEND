@@ -12,7 +12,7 @@ router.post('/user/create', function (req, res) {
     const cpf = req.body.cpf;
 
     if(UserController.userEmailExists(email)){
-        res.send({
+        res.send({ 
             'response':'email_alredy_exists', 
             'message':'email já cadastrado'
         });
