@@ -4,6 +4,10 @@ const router = express.Router();
 const UserController = require('../Controllers/UserController');
 const CourseController = require('../Controllers/CourseController');
 
+router.get('/teste', function (req, res) {
+    res.send({'message':'teste'});
+});
+
 router.post('/user/create', function (req, res) {
     const fullName = req.body.fullName; 
     const preferedName = req.body.preferedName; 
@@ -11,6 +15,18 @@ router.post('/user/create', function (req, res) {
     const password = req.body.password; 
     const cpf = req.body.cpf;
 
+    res.send({
+        'response':'sucess', 
+        'message':'usuário registrado com sucesso',
+        'data':{
+            fullName,
+            preferedName,
+            email,
+            password,
+            cpf
+        }
+    });
+    
     if(UserController.userEmailExists(email)){
         res.send({ 
             'response':'email_alredy_exists', 
@@ -34,7 +50,6 @@ router.post('/user/create', function (req, res) {
                 'message':'não foi possível executar esta operação'
             });
         }
-        
     }
 });
 

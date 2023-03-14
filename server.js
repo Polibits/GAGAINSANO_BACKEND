@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 /* importanto controllers */
 //const UserController = require("./Controllers/2UserController");
 const LogController = require("./Controllers/LogController");
-const PaymentControllr = require("./Controllers/PaymentController");
+const PaymentController = require("./Controllers/PaymentController");
 //const EmailSender = require("./Controllers/EmailSender");
 
 app.use(express.json({limit: '200mb'}))
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false, limit: '20mb' }))
 /* banco de dados */
 const conn = require('./db/conn');
 
-/* Importar Models */
+/* importar models */
 const UserInfo = require("./models/userInfo");
 const UserCred = require('./models/usercripto');
 const VideosModels = require('./models/videos');
@@ -40,4 +40,4 @@ conn.sync({ force: true})// colocar force: true ao alterar dados no BD
 })
 .catch((err)=> {console.log(err)})
 
-//.sync({ force: true})===============================================
+//.sync({ force: true})

@@ -30,16 +30,16 @@ const userIDLenght = 8;
  * @returns nada
  */
 function registerUser(fullName, preferedName, email, password, cpf) {
-    /* Registro das Credenciais */
+    /* registro das Credenciais */
     const UserId = newUserID();
     const defaultUserType = 'student';
 
-    /* Criptografar dados */
+    /* criptografar dados */
     const salt = newSalt(saltLength);
     const SHAemail = sha256(email)
     const SHApassword = sha256(password + salt);
     
-    /* Activation Status */
+    /* activation Status */
     const activationCode = randomString(activationCodeLenght);
     const activationDeadline = ""; //TODO
     const activated = false;
@@ -77,7 +77,6 @@ function registerUser(fullName, preferedName, email, password, cpf) {
     // tentar registrar credenciais em UserCredentials
     try {
         const createdUserCred =  UserCred.create(userCredentials);
-        
     } catch (error) {
         throw error;
     }
@@ -92,7 +91,7 @@ function registerUser(fullName, preferedName, email, password, cpf) {
     // tentar registrar usuário em userCourseAcess
     try {
         // registro bem sucedido de credenciais
-        const createdUserCA = CourseAcess.create(userCourseAcess);
+        const createdUserCourseAcess = CourseAcess.create(userCourseAcess);
     } catch (error) {
         // registro bem sucedido de credenciais
         throw error;
@@ -201,14 +200,24 @@ function newUserID() {
  */
 function userEmailExists(email) {
     var exists = false;
-    const usersInDB =  UserCred.findOne({
-        where: { email: sha256(email)}})
-        
-    if (typeof usersInDB != "undefined" && usersInDB != null) {
-         exists = true;
-    }else{
-        exists= false;
+
+    async function find(email) {
+        var founded = false;
+        const usersInDB = await UserCred.findOne({
+            where: { email: sha256(email)}}
+        );
+        console.log(usersInDB);
+        if(usersInDB == true){
+            founded = true;
+        }
+        return founded;
     }
+
+    find(email).then((response) => {
+        console.log(response);
+        if(response == true)
+            exists = true;
+    });
     return exists;
 }
 
