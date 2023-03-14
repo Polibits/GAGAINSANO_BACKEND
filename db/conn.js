@@ -1,9 +1,12 @@
+const dotenv = require('dotenv/config');
 const {Sequelize} = require('sequelize')
 // nome do bd, user e senha!
-const sequelize = new Sequelize('gagadb' , 'gui' ,'guigui167', {
-    host: 'localhost' ,
-    dialect: 'mysql'
-})
+const sequelize = new Sequelize(
+    process.env.DATABASE_NAME , 
+    process.env.DATABASE_USERNAME ,
+    process.env.DATABASE_PASSWORD, 
+    { host: 'localhost' , dialect: 'mysql' }
+)
 
 try {
     sequelize.authenticate()
