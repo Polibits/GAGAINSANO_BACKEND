@@ -1,13 +1,11 @@
-/* importações padrão */
 const express = require('express');
 const router = express.Router();
 const UserController = require('../Controllers/UserController');
 const CourseController = require('../Controllers/CourseController');
 
-router.get('/teste', function (req, res) {
-    res.send({'message':'teste'});
-});
-
+/**
+ * rota de criação de usuário
+ */
 router.post('/user/create', function (req, res) {
     const fullName = req.body.fullName; 
     const preferedName = req.body.preferedName; 
@@ -53,30 +51,24 @@ router.post('/user/create', function (req, res) {
     }
 });
 
+router.get('/user/read', function (req, res) {
 
+});
 
-//Login
-//router.post('/login' ,  UserController.Login);
+router.post('/user/update', function (req, res) {
+    
+});
 
-//Obter Informações ====================================================
-//router.get('/getUserInfo' ,  UserController.getUserInfo)
+router.post('/user/delete', function (req, res) {
+    
+});
 
-//Autenticações ========================================================
-//router.get('/authenticateCredentials');
+router.post('/user/activate', function (req, res) {
+    
+});
 
-
-router.get('/getCourseAcessPermission')
-
-//Rotas que registram ==================================================
-//router.post('/register' , UserController.registerUser);
-//router.post('/registerNewCourse', CourseController.registerNewCourse )
-router.post('/activateAccount')
-router.post('/contentUpload')
-//router.post('/registerLog' , CourseController.registerLog);
-
-//Rotas que atualizam ==================================================
-router.put('/modifyCourseAcessPermission')
-
-
+router.get('/user/authenticate', function (req, res) {
+    
+});
 
 module.exports = router

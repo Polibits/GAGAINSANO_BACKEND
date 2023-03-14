@@ -26,9 +26,6 @@ const CourseAcess = require('./models/CourseAcess')
 
 /* Importando Rotas */
 const userRoutes = require('./routes/userRoutes');
-//const estudanteRoutes = require('./routes/estudanteRoutes')
-//const videosRoutes = require('./routes/videosRoutes')
-//const adminRoutes = require('./routes/adminRoutes')
 
 /* Instanciar o Express */
 app.use('/' , userRoutes );

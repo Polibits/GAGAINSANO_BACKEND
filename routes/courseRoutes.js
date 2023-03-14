@@ -3,6 +3,6 @@ const router = express.Router();
 const UserController = require('../Controllers/UserController');
 const CourseController = require('../Controllers/CourseController');
 
-router.post('/adm/role/modify', function (req, res) {
-    
+router.get('/teste', function (req, res) {
+    res.send({'message':'teste'});
 });
