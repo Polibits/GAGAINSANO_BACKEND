@@ -1,44 +1,91 @@
 const nodemailer = require("nodemailer");
 
-var email_user = "gui@gmail.com";
-var email_password = "";
+/**
+ * The email message, with content (subject, text and html) and the receivers list.
+ */
+class Message {
+    /**
+     * Creates one Message object, with well defined subject, text, html and receivers atributes.
+     * @param {string} subject subject of the message
+     * @param {string} text plain text of the content
+     * @param {string} html html content
+     * @param {string[]} receivers receivers list
+     */
+    constructor(subject, text, html, receivers) {
+        this.text = text;
+        this.html = html;
+        this.subject = subject;
+        this.receivers = receivers;
+    }
+    /**
+     * Generates a string with the receivers in the right format to the email sending process.
+     * @returns {string} the receivers list string, in the format "email_1, ..., email_n".
+     */
+    get_receivers_string(){
+        var final_string = "";
+        var last_index = this.receivers.length - 1;
 
-async function main(){
-    // transportador
-    let transporter = nodemailer.createTransport({
-        host: "smtp.outlook.com",
-        port: 587,
-        secure: false,
-        auth: {
-            user: email_user,
-            pass: email_password,
-        },
+        for(var i = 0; i < last_index; i++)
+            final_string += this.receivers[i] + ", ";
+        final_string += this.receivers[last_index];
+        
+        return final_string;
+    }
+};
+
+/**
+ * The email sending origin, with host, username, user_email and password.
+ */
+class Origin {
+    /**
+     * Creates a Origin object, with well defined host, username, user_email and password atributes.
+     * @param {string} host SMTP server.
+     * @param {string} username username of the author.
+     * @param {string} user_email email of the author.
+     * @param {string[]} password password of the author's account.
+     */
+    constructor(host, username, user_email, password) {
+        this.host = host; 
+        this.username = username; 
+        this.user_email = user_email; 
+        this.password = password;
+        this.transporter = nodemailer.createTransport({
+            host: host,
+            port: 587,
+            secure: false,
+            auth: {
+                user: user_email,
+                pass: password,
+            },
+        });
+    }
+
+    /**
+     * Creates the string of the author, for the email sending process.
+     * @returns {string} the string in the default format.
+     */
+    get_author_string(){
+        return '"' + this.username + '" <' + this.user_email + '>';
+    }
+};
+
+/**
+ * This function sends the email from the author to the final receivers.
+ * @param {Message} message message object, that contains: subject, text, html and receivers.
+ * @param {Origin} origin origin object, that contains: host, username, user_email and password.
+ */
+async function SendEmail(message, origin){
+    let send_message = await origin.transporter.sendMail({
+        from: origin.get_author_string(),
+        to: message.get_receivers_string(),
+        subject: message.subject,
+        text: message.text,
+        html: message.html
     });
-    
-    // faz o envio da mensagem
-    let message = await transporter.sendMail({
-        from: '"Gagá Insano 👽" <henrique_eduardo_souza@hotmail.com>',
-        to: "rycky900@gmail.com",
-        subject: "Teste ✔",
-        text: "Este é um email enviado pelo servidor do gagá insano",
-        html: `<h1>Olá!</h1>
-        <p>Este é um email enviado pelo servidor do Gagá Insano!</p>`,
-    });
-
-    transporter.sendMail(message, (err, info) => {
-        if (err) {
-            console.log('Error occurred. ' + err.message);
-            return process.exit(1);
-        }
-
-        console.log('Message sent: %s', info.messageId);
-    });
-}
-
-function SendEmail(){
-    main().catch(console.error);
 }
 
 module.exports = {
-    SendEmail
+    SendEmail,
+    Origin,
+    Message
 }
