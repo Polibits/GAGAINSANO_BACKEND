@@ -29,97 +29,118 @@ const userIDLenght = 8;
  * @param {string} cpf cpf do usuário
  * @returns nada
  */
-function registerUser(fullName, preferedName, email, password, cpf) {
-    /* registro das Credenciais */
-    const UserId = newUserID();
-    const defaultUserType = 'student';
 
-    /* criptografar dados */
-    const salt = newSalt(saltLength);
-    const SHAemail = sha256(email)
-    const SHApassword = sha256(password + salt);
+module.exports = class UserController{
+    static async registerUser(req , res) {
+
+        const fullName = req.body.fullName; 
+        const preferedName = req.body.preferedName; 
+        const email = req.body.email; 
+        const password = req.body.password; 
+        const cpf = req.body.cpf;
+
+        /* registro das Credenciais */
+        const UserId = newUserID();
+        const defaultUserType = 'student';
     
-    /* activation Status */
-    const activationCode = randomString(activationCodeLenght);
-    const activationDeadline = ""; //TODO
-    const activated = false;
+        /* criptografar dados */
+        const salt = newSalt(saltLength);
+        const SHAemail = sha256(email)
+        const SHApassword = sha256(password + salt);
+        
+        /* activation Status */
+        const activationCode = randomString(activationCodeLenght);
+        const activationDeadline = ""; //TODO
+        const activated = false;
+    
+        const userCredentials = {
+            "email": SHAemail,
+            "password": SHApassword,
+            "salt": salt,
+            "activationCode": activationCode,
+            //"activationDeadline": activationDeadline,
+            "activated": activated,
+            "UserId" : UserId
+        }
+    
+        const userInfo = {
+            "UserId": UserId,
+            "fullName": fullName,
+            "preferedName": preferedName,
+            "email": SHAemail,
+            "userType": defaultUserType,
+            "cpf": cpf
+        }
+    
+        const userCourseAcess = {
+            UserId: UserId,
+            gaga_insano_fisica: false,
+            gaga_insano_matematica: false,
+            gaga_insano_fuvest: false,
+        };
+    
+        console.log(userCredentials);
+        console.log(userInfo);
+        console.log(userCourseAcess);
+    
+        // tentar registrar credenciais em UserCredentials
 
-    const userCredentials = {
-        "email": SHAemail,
-        "password": SHApassword,
-        "salt": salt,
-        "activationCode": activationCode,
-        //"activationDeadline": activationDeadline,
-        "activated": activated,
-        "UserId" : UserId
-    }
+        try{
+            const createdUserCred =  await UserCred.create(userCredentials);
+            const createdUserInfo =  await UserInfo.create(userInfo);
+            const createdUserCourseAcess = await CourseAcess.create(userCourseAcess);
+            res.send({message:"Deu bom!"})
+        }catch(error){
+            console.log(error)
+    
+            }
 
-    const userInfo = {
-        "UserId": UserId,
-        "fullName": fullName,
-        "preferedName": preferedName,
-        "email": email,
-        "userType": defaultUserType,
-        "cpf": cpf
-    }
 
-    const userCourseAcess = {
-        UserId: UserId,
-        gaga_insano_fisica: false,
-        gaga_insano_matematica: false,
-        gaga_insano_fuvest: false,
-    };
+    }    
 
-    console.log(userCredentials);
-    console.log(userInfo);
-    console.log(userCourseAcess);
-
-    // tentar registrar credenciais em UserCredentials
-    try {
-        const createdUserCred =  UserCred.create(userCredentials);
-    } catch (error) {
-        throw error;
-    }
-
-    // tentar registrar informações em UserInfo
-    try {
-        createdUserInfo =  UserInfo.create(userInfo);
-    } catch (error) {
-        throw error;
-    }
-
-    // tentar registrar usuário em userCourseAcess
-    try {
-        // registro bem sucedido de credenciais
-        const createdUserCourseAcess = CourseAcess.create(userCourseAcess);
-    } catch (error) {
-        // registro bem sucedido de credenciais
-        throw error;
-    }
-
-    return;
-}
-
-/**
+    /**
  * verifica se credenciais são válidas
  * @param {string} email email do usuário 
  * @param {string} password senha do usuário
  * @returns {boolean} retorna true se credenciais são válidas
  */
-function authenticateCredentials(email, password) {
-    var valid = false;
-    
-    const user = findUser(email);
-    const databasePassword = user.password;
-    const salt = user.salt;
+    static async authenticateCredentials(req , res) {
+        const email = req.body.email;
+        const password = req.body.password
+        const SHAemail = sha256(email)
+        var valid = false;
+        
+        //Find user
+        const user = await UserCred.findOne({ where: { email : SHAemail}})
 
-    if(sha256(password + salt) == databasePassword)
-        valid = true;
-    else
-        valid = false;
+        if(!user){
+                res.send({message: "Email não encontrado!"})
+        }else{
+                const databasePassword = user.password;
+                const salt = user.salt;
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  + databasePassword + salt)
+            
+                if(sha256(password + salt) == databasePassword)
+                    valid = true;
+                else
+                    valid = false;
+            
+                if(valid){
+                    res.send({message: "Login funciona!"})
+                }else{
+                    res.send({message: "Não entrou1"})
+                }
 
-    return valid;
+        }
+
+        
+    }
+
+
 }
+
+
+
 
 /**
  * Ativar conta
@@ -132,6 +153,7 @@ function activateAccount(email) {
 
     try{
         User.update(userUpdate)
+        return true;
     }catch(error){
         throw error;
     }
@@ -225,10 +247,15 @@ function userEmailExists(email) {
  * @param {string} cpf cpf do usuário
  * @returns {boolean} verdadeiro se cpf existe e falso caso contrário
  */
-function userCPFExists(cpf) {
-    var exists = false;
-    // TODO implemen
-    return exists;
+async function userCPFExists(cpf) {
+    exist = false
+    const usercpf = await UserInfo.findOne({ where: { cpf: cpf } });
+    if (usercpf === null) {
+        exist = false
+    } else {
+       exist = true
+            }
+    return exist 
 }
 
 // Informações do User com Email //
@@ -268,11 +295,3 @@ function randomNumber(length) {
         .toString("hex")
         .slice(0, length);
 }
-
-module.exports = {
-    registerUser,
-    authenticateCredentials,
-    activateAccount,
-    getUserInfo,
-    userEmailExists
-};
