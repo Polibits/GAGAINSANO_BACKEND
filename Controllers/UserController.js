@@ -136,6 +136,35 @@ module.exports = class UserController{
         
     }
 
+    /*Ativação de conta (activateAccount)
+	-Entradas: {email, activationCode}
+	-Retorno: {response}
+	-Respostas:
+		(a) sucesso: conta ativada com sucesso
+		(b) código incorreto: código não corresponde ao enviado pelo email
+		(c) email não encontrado: email não existe na base de dados
+		(d) erro: não foi possível realizar a operação
+	-Operações:
+		(a) Alterar o campo "activated" de UserCredentials para "true" */
+
+   static async  activateAccount(req , res) {
+        const email = req.body.email;
+        const activationCode = req.body.activationCode
+        const SHAemail = sha256(email)
+
+        const userAc = {activated: true}
+            try{
+                await UserCred.update(userAc , {where: {email : SHAemail}})
+                console.log('sucesso: conta ativada com sucesso')
+            }catch(e){
+                console.log(e)
+            }
+
+
+
+    
+    }
+
 
 }
 

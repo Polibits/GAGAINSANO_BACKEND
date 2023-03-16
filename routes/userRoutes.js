@@ -17,7 +17,7 @@ router.post('/user/create', UserController.registerUser )
     
 
 
-//router.post('/user/activate')
+router.post('/user/activateAccount' ,  UserController.activateAccount)
     
 
 
