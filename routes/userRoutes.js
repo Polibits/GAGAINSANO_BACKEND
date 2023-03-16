@@ -13,7 +13,7 @@ router.post('/user/create', UserController.registerUser )
 
 //router.post('/user/update')
 
-//router.post('/user/delete')
+router.post('/user/delete' , UserController.deleteUser )
     
 
 

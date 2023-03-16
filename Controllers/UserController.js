@@ -166,6 +166,30 @@ module.exports = class UserController{
     }
 
 
+    static async deleteUser(req , res){
+        const email = req.body.email;
+        const id = req.body.id;
+
+        
+        try{
+            UserInfo.destroy({ where: { id: id } ,{} })  
+            UserCred.destroy({ where: { id: id } })
+            CourseAcess.destroy({ where: { id: id } })
+        }catch(e){
+            console.log(e)
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
 }
 
 
