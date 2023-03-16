@@ -31,7 +31,7 @@ const userIDLenght = 8;
  */
 
 module.exports = class UserController{
-    static async registerUser(req , res) {
+    static async registerUser(req, res) {
 
         const fullName = req.body.fullName; 
         const preferedName = req.body.preferedName; 
@@ -67,7 +67,7 @@ module.exports = class UserController{
             "UserId": UserId,
             "fullName": fullName,
             "preferedName": preferedName,
-            "email": SHAemail,
+            "email": email,
             "userType": defaultUserType,
             "cpf": cpf
         }
@@ -89,13 +89,15 @@ module.exports = class UserController{
             const createdUserCred =  await UserCred.create(userCredentials);
             const createdUserInfo =  await UserInfo.create(userInfo);
             const createdUserCourseAcess = await CourseAcess.create(userCourseAcess);
-            res.send({message:"Deu bom!"})
         }catch(error){
-            console.log(error)
-    
-            }
-
-
+            res.send({'message':'error'});
+            console.log(error);
+        }
+        res.send({
+            'response':'sucess',
+            'message':'usuário criado com sucesso',
+            'details':userInfo
+        });
     }    
 
     /**
@@ -106,31 +108,33 @@ module.exports = class UserController{
  */
     static async authenticateCredentials(req , res) {
         const email = req.body.email;
-        const password = req.body.password
-        const SHAemail = sha256(email)
-        var valid = false;
+        const password = req.body.password;
+        const SHAemail = sha256(email);
         
         //Find user
         const user = await UserCred.findOne({ where: { email : SHAemail}})
 
-        if(!user){
-                res.send({message: "Email não encontrado!"})
-        }else{
-                const databasePassword = user.password;
-                const salt = user.salt;
-                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  + databasePassword + salt)
-            
-                if(sha256(password + salt) == databasePassword)
-                    valid = true;
-                else
-                    valid = false;
-            
-                if(valid){
-                    res.send({message: "Login funciona!"})
-                }else{
-                    res.send({message: "Não entrou1"})
-                }
-
+        if(user) {
+            const databasePassword = user.password;
+            const salt = user.salt;
+        
+            if(sha256(password + salt) == databasePassword){
+                res.send({
+                    'response':'sucess',
+                    'message':'autenticação bem sucedida'
+                });
+            }
+            else{
+                res.send({
+                    'response':'wrong_passsword',
+                    'message':'senha incorreta'
+                });
+            }
+        } else {
+            res.send({
+                'response': 'email_not_found',
+                'message':'email não encontrado'
+            })
         }
 
         
