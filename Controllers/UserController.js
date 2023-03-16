@@ -1,5 +1,5 @@
-const UserInfo = require("../models/userInfo");
-const UserCred = require("../models/usercripto");
+const UserInfo = require("../models/UserInfo");
+const UserCredentials = require("../models/UserCredentials");
 const CourseAcess = require("../models/CourseAcess");
 const Videos = require("../models/videos");
 
@@ -32,7 +32,6 @@ const userIDLenght = 8;
 
 module.exports = class UserController{
     static async registerUser(req, res) {
-
         const fullName = req.body.fullName; 
         const preferedName = req.body.preferedName; 
         const email = req.body.email; 
@@ -83,16 +82,43 @@ module.exports = class UserController{
         console.log(userInfo);
         console.log(userCourseAcess);
     
-        // tentar registrar credenciais em UserCredentials
-
+        /* tentar registrar credenciais em UserCredentials */
         try{
-            const createdUserCred =  await UserCred.create(userCredentials);
-            const createdUserInfo =  await UserInfo.create(userInfo);
-            const createdUserCourseAcess = await CourseAcess.create(userCourseAcess);
+            const createdUserCred =  await UserCredentials.create(userCredentials);
         }catch(error){
-            res.send({'message':'error'});
+            res.send({
+                'response':'error',
+                'message':'não foi possível registrar credenciais do usuário',
+                'details':error
+            });
             console.log(error);
         }
+
+        /* tentar registrar credenciais em UserCredentials */
+        try{
+            const createdUserInfo =  await UserInfo.create(userInfo);
+        }catch(error){
+            res.send({
+                'response':'error',
+                'message':'não foi possível registrar informações de perfil do usuário',
+                'details':error
+            });
+            console.log(error);
+        }
+
+        /* tentar registrar credenciais em UserCredentials */
+        try{
+            const createdUserCourseAcess = await CourseAcess.create(userCourseAcess);
+        }catch(error){
+            res.send({
+                'response':'error',
+                'message':'não foi possível registrar informações de acesso aos cursos do usuário',
+                'details':error
+            });
+            console.log(error);
+        }
+
+        /* sucesso de todas as etapas */
         res.send({
             'response':'sucess',
             'message':'usuário criado com sucesso',
@@ -101,18 +127,18 @@ module.exports = class UserController{
     }    
 
     /**
- * verifica se credenciais são válidas
- * @param {string} email email do usuário 
- * @param {string} password senha do usuário
- * @returns {boolean} retorna true se credenciais são válidas
- */
+     * verifica se credenciais são válidas
+     * @param {string} email email do usuário 
+     * @param {string} password senha do usuário
+     * @returns {boolean} retorna true se credenciais são válidas
+     */
     static async authenticateCredentials(req , res) {
         const email = req.body.email;
         const password = req.body.password;
         const SHAemail = sha256(email);
         
-        //Find user
-        const user = await UserCred.findOne({ where: { email : SHAemail}})
+        /* verifica se usuário existe */
+        const user = await UserCredentials.findOne({ where: { email : SHAemail}})
 
         if(user) {
             const databasePassword = user.password;
@@ -136,107 +162,32 @@ module.exports = class UserController{
                 'message':'email não encontrado'
             })
         }
-
-        
     }
 
-    /*Ativação de conta (activateAccount)
-	-Entradas: {email, activationCode}
-	-Retorno: {response}
-	-Respostas:
-		(a) sucesso: conta ativada com sucesso
-		(b) código incorreto: código não corresponde ao enviado pelo email
-		(c) email não encontrado: email não existe na base de dados
-		(d) erro: não foi possível realizar a operação
-	-Operações:
-		(a) Alterar o campo "activated" de UserCredentials para "true" */
-
-   static async  activateAccount(req , res) {
+    static async activateAccount(req, res) {
         const email = req.body.email;
-        const activationCode = req.body.activationCode
+        const activationCode = req.body.activationCode;
         const SHAemail = sha256(email)
 
-        const userAc = {activated: true}
-            try{
-                await UserCred.update(userAc , {where: {email : SHAemail}})
-                console.log('sucesso: conta ativada com sucesso')
-            }catch(e){
-                console.log(e)
-            }
+        const userActivationStatus = {activated: true}
 
-
-
-    
+        try{
+            await UserCredentials.update(
+                userActivationStatus , 
+                {where: {email : SHAemail}
+            });
+            res.send({
+                'response':'sucess',
+                'message': 'conta ativada com sucesso'
+            });
+        }catch(error){
+            console.log(error)
+        }
     }
 
+    static async getUsers(req, res) {
 
-}
-
-
-
-
-/**
- * Ativar conta
- * @param {string} email email do usuário
- * @returns nada
- */
-function activateAccount(email) {
-    const User = findUser(email)
-    const userUpdate = {activated: true}
-
-    try{
-        User.update(userUpdate)
-        return true;
-    }catch(error){
-        throw error;
     }
-    
-    return;
-}
-
-
-function getUserInfo(userID) {
-    const usersCred = UserCred.findOne({
-        where: {
-            userID: userID,
-        },
-        raw: true,
-      });
-    const usersInfo = UserInfo.findOne({
-        where: {
-            userID: userID,
-        },
-        raw: true,
-      });
-
-    var user = {
-        "response": "", 
-        "email": usersCred.email, 
-        "fullName": usersInfo.fullname, 
-        "preferedName": usersInfo.preferedName,  
-        "password": usersCred.password, 
-        "cpf": usersInfo.CPF
-    };
-
-    return user;
-}
-
-/**
- * 
- * @param {string} email email do usuário 
- * @param {string} activationCode códifo de ativação
- * @returns 
- */
-function validActivationCode(email, activationCode) {
-    var valid = false;
-    /* encontrar usuário e obter código de autenticação */
-    const databaseActivationCode = "";
-    if(databaseActivationCode == activationCode){
-        valid = true;
-    } else {
-        valid = false;
-    }
-    return valid;
 }
 
 function newUserID() {
@@ -258,7 +209,7 @@ function userEmailExists(email) {
 
     async function find(email) {
         var founded = false;
-        const usersInDB = await UserCred.findOne({
+        const usersInDB = await UserCredentials.findOne({
             where: { email: sha256(email)}}
         );
         console.log(usersInDB);
@@ -294,7 +245,7 @@ async function userCPFExists(cpf) {
 // Informações do User com Email //
 // Função de achar o seu User //
 async function findUser(email) {
-    const usersInDB = await UserCred.findOne({
+    const usersInDB = await UserCredentials.findOne({
         where: {email: sha256(email)},
             raw: true,
         });

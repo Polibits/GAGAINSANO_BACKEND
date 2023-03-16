@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
-const UserCred = db.define('UserCred' , {
+const UserCredentials = db.define('UserCredentials' , {
     email: {
         type: DataTypes.STRING ,
         allowNull : false ,
@@ -40,4 +40,4 @@ const UserCred = db.define('UserCred' , {
     },
 })
 
-module.exports = UserCred
+module.exports = UserCredentials
