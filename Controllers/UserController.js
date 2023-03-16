@@ -206,14 +206,13 @@ module.exports = class UserController{
         }
     }
 
-    static async getUser(req, res) {
+    static async getUserInfo(req, res) {
         const userId = req.body.UserId;
-        console.log('buscando usuário de id ', userId);
+
         try {
-            const user = await UserCredentials.findOne(
+            const user = await UserInfo.findOne(
                 {where:{'UserId':userId}}
             );
-            console.log('----------------------', user)
             if(user){
                 res.send({
                     'response':'sucess',

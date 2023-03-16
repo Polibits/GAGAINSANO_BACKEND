@@ -6,25 +6,18 @@ const CourseController = require('../Controllers/CourseController');
 /**
  * rota de criação de usuário
  */
-router.post('/user/create', UserController.registerUser )
+router.post('/user/create', UserController.registerUser)
 
-router.get('/user/read', UserController.getUser)
+router.get('/user/read', UserController.getUserInfo)
 
 router.get('/user/read/all', UserController.getUsers)
 
 //router.post('/user/update')
 
 //router.post('/user/delete')
+
+router.post('/user/activateAccount',  UserController.activateAccount)
     
-
-
-router.post('/user/activateAccount' ,  UserController.activateAccount)
-    
-
-
-router.post('/user/authenticate'  , UserController.authenticateCredentials)
+router.post('/user/authenticate', UserController.authenticateCredentials)
  
-    
-
-
-module.exports = router
+module.exports = router;
