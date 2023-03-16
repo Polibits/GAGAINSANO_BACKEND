@@ -8,8 +8,9 @@ const CourseController = require('../Controllers/CourseController');
  */
 router.post('/user/create', UserController.registerUser )
 
+router.get('/user/read', UserController.getUser)
 
-//router.get('/user/read')
+router.get('/user/read/all', UserController.getUsers)
 
 //router.post('/user/update')
 

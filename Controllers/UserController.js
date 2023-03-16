@@ -20,17 +20,16 @@ const userIDLenght = 8;
  * validActivationCode
  */
 
-/**
- * registra um usuário no banco de dados
- * @param {string} fullName nome completo do usuário 
- * @param {string} preferedName apelido ou nome social
- * @param {string} email email do usuário
- * @param {string} password senha do usuário
- * @param {string} cpf cpf do usuário
- * @returns nada
- */
-
 module.exports = class UserController{
+    /**
+     * registra um usuário no banco de dados
+     * @param {string} fullName nome completo do usuário 
+     * @param {string} preferedName apelido ou nome social
+     * @param {string} email email do usuário
+     * @param {string} password senha do usuário
+     * @param {string} cpf cpf do usuário
+     * @returns nada
+     */
     static async registerUser(req, res) {
         const fullName = req.body.fullName; 
         const preferedName = req.body.preferedName; 
@@ -180,78 +179,69 @@ module.exports = class UserController{
                 'response':'sucess',
                 'message': 'conta ativada com sucesso'
             });
-        }catch(error){
-            console.log(error)
+        } catch(error){
+            res.send({
+                'response':'error',
+                'message': 'não foi possível autenticar conta'
+            });
         }
     }
 
     static async getUsers(req, res) {
+        try {
+            const users = await UserCredentials.findAll();
+            if(users){
+                res.send({
+                    'response':'sucess',
+                    'message':'usuários obtidos com sucesso',
+                    'users':users
+                });
+            }
+        } catch(error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível obter usuários',
+                'details':error
+            });
+        }
+    }
 
+    static async getUser(req, res) {
+        const userId = req.body.UserId;
+        console.log('buscando usuário de id ', userId);
+        try {
+            const user = await UserCredentials.findOne(
+                {where:{'UserId':userId}}
+            );
+            console.log('----------------------', user)
+            if(user){
+                res.send({
+                    'response':'sucess',
+                    'message':'usuário obtido com sucesso',
+                    'user':user
+                });
+            } else {
+                res.send({
+                    'response':'id_does_not_exists',
+                    'message':'id do usuário não existe',
+                    'user':user
+                });
+            }
+        } catch(error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível buscar usuário',
+                'details':error
+            });
+        }
     }
 }
 
 function newUserID() {
-    var newID = "";
-
-    newID = randomNumber(userIDLenght);
-
-    // TODO veriricar unicidade
-
-    return newID;
-}
-
-/**
- * @param {string} email email do usuário
- * @returns {boolean} verdadeiro se email existe e falso caso contrário
- */
-function userEmailExists(email) {
-    var exists = false;
-
-    async function find(email) {
-        var founded = false;
-        const usersInDB = await UserCredentials.findOne({
-            where: { email: sha256(email)}}
-        );
-        console.log(usersInDB);
-        if(usersInDB == true){
-            founded = true;
-        }
-        return founded;
-    }
-
-    find(email).then((response) => {
-        console.log(response);
-        if(response == true)
-            exists = true;
-    });
-    return exists;
-}
-
-/**
- * @param {string} cpf cpf do usuário
- * @returns {boolean} verdadeiro se cpf existe e falso caso contrário
- */
-async function userCPFExists(cpf) {
-    exist = false
-    const usercpf = await UserInfo.findOne({ where: { cpf: cpf } });
-    if (usercpf === null) {
-        exist = false
-    } else {
-       exist = true
-            }
-    return exist 
-}
-
-// Informações do User com Email //
-// Função de achar o seu User //
-async function findUser(email) {
-    const usersInDB = await UserCredentials.findOne({
-        where: {email: sha256(email)},
-            raw: true,
-        });
-    // Método para transformar Objeto em Json String
-    const userInDBJson = JSON.parse(JSON.stringify(usersInDB));
-    return userInDBJson;
+    return crypto
+        .randomBytes(Math.ceil(userIDLenght / 2))
+        .toString("hex")
+        .slice(0, userIDLenght);
 }
 
 function sha256(content) {
