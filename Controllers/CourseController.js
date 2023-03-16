@@ -1,5 +1,5 @@
-const UserInfo = require("../models/userInfo");
-const UserCred = require("../models/usercripto");
+const UserInfo = require("../models/UserInfo");
+const UserCredentials = require("../models/UserCredentials");
 const CourseAcess = require("../models/CourseAcess");
 const CourseContentModel = require('../models/CourseContent')
 const Videos = require("../models/videos");

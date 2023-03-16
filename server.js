@@ -6,6 +6,8 @@ var crypto = require('crypto');
 const sequelize = require('sequelize')
 const bodyParser = require('body-parser');
 
+const port = 3000;
+
 /* importanto controllers */
 //const UserController = require("./Controllers/2UserController");
 const LogController = require("./Controllers/LogController");
@@ -20,7 +22,7 @@ const conn = require('./db/conn');
 
 /* importar models */
 const UserInfo = require("./models/userInfo");
-const UserCred = require('./models/usercripto');
+const UserCredentials = require('./models/UserCredentials');
 const VideosModels = require('./models/videos');
 const CourseAcess = require('./models/CourseAcess')
 
@@ -33,7 +35,8 @@ app.use('/' , userRoutes );
 /* Conexão Sync */ 
 conn.sync({ force: true})// colocar force: true ao alterar dados no BD
 .then( ()=> {
-    app.listen(3000)
+    console.log('server rodando na porta: ', port)
+    app.listen(port)
 })
 .catch((err)=> {console.log(err)})
 
