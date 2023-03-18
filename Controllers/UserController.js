@@ -125,6 +125,22 @@ module.exports = class UserController{
         });
     }    
 
+    static async deleteUser(req , res){
+        const email = req.body.email;
+        const id = req.body.id;
+
+        
+        try{
+            UserInfo.destroy({ where: { id: id } })  
+            UserCred.destroy({ where: { id: id } })
+            CourseAcess.destroy({ where: { id: id } })
+        }catch(e){
+            console.log(e)
+        }
+
+
+    }
+
     /**
      * verifica se credenciais são válidas
      * @param {string} email email do usuário 
@@ -171,6 +187,7 @@ module.exports = class UserController{
 
 
     }
+
 
     static async activateAccount(req, res) {
         const email = req.body.email;
@@ -263,6 +280,7 @@ module.exports = class UserController{
         
     }
 }
+
 
 function newUserID() {
     return crypto
