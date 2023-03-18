@@ -132,35 +132,44 @@ module.exports = class UserController{
      * @returns {boolean} retorna true se credenciais são válidas
      */
     static async authenticateCredentials(req , res) {
-        const email = req.body.email;
-        const password = req.body.password;
-        const SHAemail = sha256(email);
-        
-        /* verifica se usuário existe */
-        const user = await UserCredentials.findOne({ where: { email : SHAemail}})
-
-        if(user) {
-            const databasePassword = user.password;
-            const salt = user.salt;
-        
-            if(sha256(password + salt) == databasePassword){
+        try {
+            const email = req.query.email;
+            const password = req.query.password;
+            const SHAemail = sha256(email);
+            
+            /* verifica se usuário existe */
+            const user = await UserCredentials.findOne({ where: { email : SHAemail}})
+    
+            if(user) {
+                const databasePassword = user.password;
+                const salt = user.salt;
+            
+                if(sha256(password + salt) == databasePassword){
+                    res.send({
+                        'response':'sucess',
+                        'message':'autenticação bem sucedida'
+                    });
+                }
+                else{
+                    res.send({
+                        'response':'wrong_passsword',
+                        'message':'senha incorreta'
+                    });
+                }
+            } else {
                 res.send({
-                    'response':'sucess',
-                    'message':'autenticação bem sucedida'
-                });
+                    'response': 'email_not_found',
+                    'message':'email não encontrado'
+                })
             }
-            else{
-                res.send({
-                    'response':'wrong_passsword',
-                    'message':'senha incorreta'
-                });
-            }
-        } else {
+        } catch (error) {
             res.send({
-                'response': 'email_not_found',
-                'message':'email não encontrado'
+                'response':'error',
+                'details':error
             })
         }
+
+
     }
 
     static async activateAccount(req, res) {
@@ -236,29 +245,21 @@ module.exports = class UserController{
     }
 
     static async test(req, res) {
-        const email = req.body.email;
-        const password = req.body.password;
-        const details = {
-            email:email,
-            password:password
-        }
         try {
-            
-            console.log(req);
+            const email = req.query.email;
+            const password = req.query.password;
+            console.log(req.query);
             res.send({
                 'response':'sucess',
-                'message':'autenticação feita com sucesso!',
-                'details':details
+                'email':email,
+                'password':password
             });
         } catch (error) {
-            console.log(details);
             res.send({
                 'response':'error',
-                'message':'não foi possível autenticar',
-                'details':error
+                'details': error
             });
         }
-
         
     }
 }
