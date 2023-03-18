@@ -14,13 +14,7 @@ router.get('/user/read/all', UserController.getAllUsersInfo)
 
 //router.post('/user/update')
 
-<<<<<<< HEAD
 router.post('/user/delete' , UserController.deleteUser )
-=======
-//router.post('/user/delete')
-
-router.post('/user/activateAccount',  UserController.activateAccount)
->>>>>>> a15852cc3e79b31297e6b16851ccc6ad8644dadc
     
 router.get('/user/authenticate', UserController.authenticateCredentials)
 
