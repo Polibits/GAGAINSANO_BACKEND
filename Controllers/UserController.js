@@ -32,7 +32,7 @@ module.exports = class UserController{
      */
     static async registerUser(req, res) {
         const fullName = req.body.fullName; 
-        const preferedName = req.body.preferedName; 
+        const username = req.body.username; 
         const email = req.body.email; 
         const password = req.body.password; 
         const cpf = req.body.cpf;
@@ -64,7 +64,7 @@ module.exports = class UserController{
         const userInfo = {
             "UserId": UserId,
             "fullName": fullName,
-            "preferedName": preferedName,
+            "username": username,
             "email": email,
             "userType": defaultUserType,
             "cpf": cpf
@@ -187,9 +187,9 @@ module.exports = class UserController{
         }
     }
 
-    static async getUsers(req, res) {
+    static async getAllUsersInfo(req, res) {
         try {
-            const users = await UserCredentials.findAll();
+            const users = await UserInfo.findAll();
             if(users){
                 res.send({
                     'response':'sucess',
@@ -233,6 +233,33 @@ module.exports = class UserController{
                 'details':error
             });
         }
+    }
+
+    static async test(req, res) {
+        const email = req.body.email;
+        const password = req.body.password;
+        const details = {
+            email:email,
+            password:password
+        }
+        try {
+            
+            console.log(req);
+            res.send({
+                'response':'sucess',
+                'message':'autenticação feita com sucesso!',
+                'details':details
+            });
+        } catch (error) {
+            console.log(details);
+            res.send({
+                'response':'error',
+                'message':'não foi possível autenticar',
+                'details':error
+            });
+        }
+
+        
     }
 }
 

@@ -8,7 +8,12 @@ const UserInfo = db.define('UserInfo' , {
         allowNull : false ,
         require: true,
     },
-    preferedName: {
+    username: {
+        type: DataTypes.STRING ,
+        allowNull : false ,
+        require: true,
+    },
+    email: {
         type: DataTypes.STRING ,
         allowNull : false ,
         require: true,
@@ -28,8 +33,6 @@ const UserInfo = db.define('UserInfo' , {
         allowNull : false ,
         require: true,
     },
-
-
-})
+});
 
 module.exports = UserInfo

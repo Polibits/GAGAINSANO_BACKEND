@@ -10,7 +10,7 @@ router.post('/user/create', UserController.registerUser)
 
 router.get('/user/read', UserController.getUserInfo)
 
-router.get('/user/read/all', UserController.getUsers)
+router.get('/user/read/all', UserController.getAllUsersInfo)
 
 //router.post('/user/update')
 
@@ -18,6 +18,8 @@ router.get('/user/read/all', UserController.getUsers)
 
 router.post('/user/activateAccount',  UserController.activateAccount)
     
-router.post('/user/authenticate', UserController.authenticateCredentials)
+router.get('/user/authenticate', UserController.authenticateCredentials)
+
+router.get('/user/test', UserController.test)
  
 module.exports = router;
