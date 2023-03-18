@@ -43,7 +43,8 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/' , userRoutes );
 
 /* Conexão Sync */ 
-conn.sync({ force: true})// colocar force: true ao alterar dados no BD
+const force = false;
+conn.sync({ force: force})// colocar force: true ao alterar dados no BD
 .then( ()=> {
     console.log('server rodando na porta: ', port)
     app.listen(port)

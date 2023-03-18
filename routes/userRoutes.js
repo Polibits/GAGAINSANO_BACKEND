@@ -21,5 +21,9 @@ router.post('/user/activateAccount',  UserController.activateAccount)
 router.get('/user/authenticate', UserController.authenticateCredentials)
 
 router.get('/user/test', UserController.test)
+
+router.post('/courses/framework/create', CourseController.createCourseFramework)
+
+router.get('/courses/framework/read/all', CourseController.getAllCoursesFrameworks)
  
 module.exports = router;

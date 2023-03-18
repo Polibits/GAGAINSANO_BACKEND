@@ -18,10 +18,6 @@ const CourseContent = db.define('CourseContent' , {
         allowNull : false ,
         require: true,
     },
-    
-    
-
-
 })
 
 module.exports = CourseContent

@@ -24,7 +24,7 @@ module.exports = class UserController{
     /**
      * registra um usuário no banco de dados
      * @param {string} fullName nome completo do usuário 
-     * @param {string} preferedName apelido ou nome social
+     * @param {string} username nome de usuário
      * @param {string} email email do usuário
      * @param {string} password senha do usuário
      * @param {string} cpf cpf do usuário
