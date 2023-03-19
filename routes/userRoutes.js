@@ -23,5 +23,7 @@ router.get('/user/test', UserController.test)
 router.post('/courses/framework/create', CourseController.createCourseFramework)
 
 router.get('/courses/framework/read/all', CourseController.getAllCoursesFrameworks)
+
+router.get('/courses/content/read', CourseController.getVideo)
  
 module.exports = router;

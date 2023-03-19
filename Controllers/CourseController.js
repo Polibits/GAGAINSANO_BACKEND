@@ -10,6 +10,7 @@ const crypto = require("crypto");
 const saltLength = 64;
 const fs = require('fs');
 const dir = "C:/Temp/Xisto";
+const path = require('path');
 
 module.exports = class CourseController {
     static async createCourseFramework(req, res) {
@@ -46,6 +47,10 @@ module.exports = class CourseController {
                 'details':error
             });
         }
+    }
+    static async getVideo(req, res) {
+        console.log(req.query);
+        res.sendFile(path.join(__dirname, '../videos/aula_01.mp4'));
     }
 }
 
