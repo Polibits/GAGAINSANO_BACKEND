@@ -48,9 +48,21 @@ module.exports = class CourseController {
             });
         }
     }
-    static async getVideo(req, res) {
-        console.log(req.query);
-        res.sendFile(path.join(__dirname, '../videos/aula_01.mp4'));
+    static async getFile(req, res) {
+        const filePrivatePath = req.query.filePrivatePath;
+        const authenticationToken = req.query.authenticationToken;
+        const privatePath = '../files/' + filePrivatePath;
+        try {
+            res.sendFile(path.join(__dirname, privatePath));
+        } catch (error) {
+            res.send('error');
+        }
+    }
+
+    static async postVideo(req, res) {
+        res.send({
+            'response':'sucess'
+        });
     }
 }
 
