@@ -6,6 +6,8 @@ var crypto = require('crypto');
 const cors = require("cors");
 const sequelize = require('sequelize')
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+
 
 const port = 5050;
 
@@ -15,8 +17,9 @@ const LogController = require("./Controllers/LogController");
 const PaymentController = require("./Controllers/PaymentController");
 //const EmailSender = require("./Controllers/EmailSender");
 
-app.use(express.json({limit: '200mb'}))
-app.use(express.urlencoded({ extended: false, limit: '20mb' }))
+app.use(express.json({limit: '200mb'}));
+app.use(express.urlencoded({ extended: false, limit: '20mb' }));
+app.use(fileUpload());
 
 app.use(
     cors({

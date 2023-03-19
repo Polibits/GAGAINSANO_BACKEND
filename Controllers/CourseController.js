@@ -11,6 +11,7 @@ const saltLength = 64;
 const fs = require('fs');
 const dir = "C:/Temp/Xisto";
 const path = require('path');
+const fileUpload = require('express-fileupload');
 
 module.exports = class CourseController {
     static async createCourseFramework(req, res) {
@@ -59,10 +60,33 @@ module.exports = class CourseController {
         }
     }
 
-    static async postVideo(req, res) {
-        res.send({
-            'response':'sucess'
-        });
+    static async saveFile(req, res) {
+        try {
+            //console.log(req.files);
+            for(var file in req.files){
+                const video = req.files[file];
+                const privatePath = '../files/videos/' + video.name;
+                const uploadPath = path.join(__dirname, privatePath);
+                video.mv(uploadPath, function(error) {
+                    if (error){
+                        res.send({
+                            'response':'error',
+                            'details':error
+                        });
+                    }
+                    res.send({
+                        'response':'sucess'
+                    });
+                  });
+            }
+            
+        } catch (error) {
+            res.send({
+                'response':'error',
+                'details':error
+            });
+        }
+        
     }
 }
 

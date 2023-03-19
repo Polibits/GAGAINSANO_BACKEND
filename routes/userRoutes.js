@@ -26,6 +26,6 @@ router.get('/courses/framework/read/all', CourseController.getAllCoursesFramewor
 
 router.get('/files/get', CourseController.getFile)
 
-router.post('courses/content/create', CourseController.postVideo)
+router.post('/files/upload', CourseController.saveFile)
  
 module.exports = router;
