@@ -13,6 +13,8 @@ const dir = "C:/Temp/Xisto";
 const path = require('path');
 const fileUpload = require('express-fileupload');
 
+const fileSecretNameLenght = 64;
+
 module.exports = class CourseController {
     static async createCourseFramework(req, res) {
         try {
@@ -65,8 +67,11 @@ module.exports = class CourseController {
             //console.log(req.files);
             for(var file in req.files){
                 const video = req.files[file];
-                const privatePath = '../files/videos/' + video.name;
+                const fileSecretName = randomHexString(fileSecretNameLenght);
+                const fileExtension = getFileExtension(video.name);
+                const privatePath = '../files/videos/' + fileSecretName + '.' + fileExtension;
                 const uploadPath = path.join(__dirname, privatePath);
+                
                 video.mv(uploadPath, function(error) {
                     if (error){
                         res.send({
@@ -75,7 +80,8 @@ module.exports = class CourseController {
                         });
                     }
                     res.send({
-                        'response':'sucess'
+                        'response':'sucess',
+                        'privatePath':privatePath
                     });
                   });
             }
@@ -122,3 +128,31 @@ function getCourseInfo(courseID){
       console.log(CCJson);
 }
 
+function sha256(content) {
+    return crypto.createHash("sha256").update(content).digest("hex");
+}
+
+function randomHexString(length) {
+    return crypto
+        .randomBytes(Math.ceil(length / 2))
+        .toString("hex")
+        .slice(0, length);
+}
+
+function getFileExtension(fileName) {
+    
+    var extension = '';
+    var crossedDot = false;
+    
+    for(var i = 0; i < fileName.length; i++){
+        if(fileName[i] == '.'){
+            crossedDot = true;
+            i = i + 1;
+        }
+        if(crossedDot == true){
+            extension = extension + fileName[i];
+        }
+    }
+    
+    return extension;
+}
