@@ -125,11 +125,11 @@ module.exports = class UserController{
         });
     }    
 
+    // TODO implementar melhor
     static async deleteUser(req , res){
         const email = req.body.email;
         const id = req.body.id;
 
-        
         try{
             UserInfo.destroy({ where: { id: id } })  
             UserCred.destroy({ where: { id: id } })
@@ -188,7 +188,6 @@ module.exports = class UserController{
 
     }
 
-
     static async activateAccount(req, res) {
         const email = req.body.email;
         const activationCode = req.body.activationCode;
@@ -233,24 +232,62 @@ module.exports = class UserController{
     }
 
     static async getUserInfo(req, res) {
-        const userId = req.body.UserId;
+        const userId = req.query.UserId;
+        const email = req.query.email;
+        const cpf = req.query.cpf;
 
+        console.log(userId);
+        console.log(email);
+        console.log(cpf);
         try {
-            const user = await UserInfo.findOne(
-                {where:{'UserId':userId}}
-            );
-            if(user){
-                res.send({
-                    'response':'sucess',
-                    'message':'usuário obtido com sucesso',
-                    'user':user
-                });
-            } else {
-                res.send({
-                    'response':'id_does_not_exists',
-                    'message':'id do usuário não existe',
-                    'user':user
-                });
+            if(userId != ''){
+                const user = await UserInfo.findOne(
+                    {where:{'UserId':userId}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'id_does_not_exists',
+                        'message':'id do usuário não existe'
+                    });
+                }
+            } else if(email != ''){
+                const user = await UserInfo.findOne(
+                    {where:{'email':email}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'email_does_not_exists',
+                        'message':'email do usuário não existe'
+                    });
+                }
+            } else if(cpf != '') {
+                const user = await UserInfo.findOne(
+                    {where:{'cpf':cpf}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'cpf_does_not_exists',
+                        'message':'cpf do usuário não existe'
+                    });
+                }
             }
         } catch(error) {
             res.send({

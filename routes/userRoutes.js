@@ -14,15 +14,23 @@ router.get('/user/read/all', UserController.getAllUsersInfo)
 
 //router.post('/user/update')
 
-router.post('/user/delete' , UserController.deleteUser )
+router.post('/user/delete' , UserController.deleteUser)
     
 router.get('/user/authenticate', UserController.authenticateCredentials)
 
 router.get('/user/test', UserController.test)
 
-router.post('/courses/framework/create', CourseController.createCourseFramework)
 
-router.get('/courses/framework/read/all', CourseController.getAllCoursesFrameworks)
+
+router.post('/courses/create', CourseController.createCourseFramework)
+
+router.get('/courses/read/all', CourseController.getAllCoursesFrameworks)
+
+router.get('/courses/read', CourseController.getCourseFramework)
+
+router.post('/courses/content/lectures/add', CourseController.registerCourseContent)
+
+router.get('/courses/content/lectures/read', CourseController.getCourseContent)
 
 router.get('/files/get', CourseController.getFile)
 

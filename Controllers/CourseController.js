@@ -1,7 +1,7 @@
 const UserInfo = require("../models/UserInfo");
 const UserCredentials = require("../models/UserCredentials");
 const CourseAcess = require("../models/CourseAcess");
-const CourseContentModel = require('../models/CourseContent')
+const CourseContent = require('../models/CourseContent')
 const CourseFramework = require("../models/CourseFramework")
 const Videos = require("../models/videos");
 const bcrypt = require("bcrypt");
@@ -51,6 +51,35 @@ module.exports = class CourseController {
             });
         }
     }
+    static async getCourseFramework(req, res) {
+        try {
+            const courseCode = req.query.courseCode;
+            const courseFramework = await CourseFramework.findOne({
+                where:{
+                    courseCode:courseCode
+                }
+            });
+            if(courseFramework){
+                res.send({
+                    'response':'sucess',
+                    'message':'curso obtido com sucesso',
+                    'coursesFrameworks':courseFramework
+                });
+            } else {
+                res.send({
+                    'response':'course_not_founded',
+                    'message':'curso não pode ser encontrado'
+                });
+            }
+            
+        } catch (error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível obter curso',
+                'details':error
+            });
+        }
+    }
     static async getFile(req, res) {
         const filePrivatePath = req.query.filePrivatePath;
         const authenticationToken = req.query.authenticationToken;
@@ -91,15 +120,57 @@ module.exports = class CourseController {
                 'response':'error',
                 'details':error
             });
+        }   
+    }
+
+    static async getCourseContent(req, res) {
+        const courseCode = req.query.courseCode;
+        try {
+            console.log(courseCode);
+            const courses = await CourseContent.findAll(
+                {where: {courseCode:courseCode}}
+            );
+            res.send({
+                'response':'sucess',
+                'courses':courses
+            });
+        } catch (error) {
+            res.send({
+                'response':'error',
+                'details':error
+            });
+        }
+    }
+
+    static async registerCourseContent(req, res) {
+        const lecture = {
+            courseCode:req.body.courseCode,
+            title:req.body.title,
+            order:req.body.order,
+            privatePath:req.body.privatePath,
+            description:req.body.description,
+            chapterName:req.body.chapterName
         }
         
+        try {
+            console.log('---------\ntentando criar:\n', lecture, '\n----------');
+            const created = await CourseContent.create(lecture);
+            res.send({
+                'response':'sucess'
+            });
+        } catch (error) {
+            res.send({
+                'response':'error',
+                'details':error
+            });
+        }
     }
 }
 
 function registerNewCourse(ID, name, description){
     const Course = { ID, name,description}
     try{
-        const createdCourse =  CourseContentModel.create(Course)
+        const createdCourse =  CourseContent.create(Course)
         console.log(createdCourse)
         console.log('sucesso: curso registrado com sucesso')
         //Verifica se não existe pasta
@@ -118,7 +189,7 @@ function registerNewCourse(ID, name, description){
 }
 
 function getCourseInfo(courseID){
-    const CourseContent = CourseContentModel.findOne({
+    const CourseContent = CourseContent.findOne({
         where: {
             Id: courseID,
         },
@@ -140,7 +211,6 @@ function randomHexString(length) {
 }
 
 function getFileExtension(fileName) {
-    
     var extension = '';
     var crossedDot = false;
     
