@@ -2,7 +2,6 @@ var dotenv = require('dotenv/config');
 var express = require('express');
 var mysql = require('mysql2');
 var app = express();
-var crypto = require('crypto');
 const cors = require("cors");
 const sequelize = require('sequelize')
 const bodyParser = require('body-parser');
@@ -28,9 +27,12 @@ const conn = require('./db/conn');
 /* Importando Rotas */
 const userRoutes = require('./routes/userRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const admRoutes = require('./routes/admRoutes');
 
 /* Instanciar o Express */
-app.use('/' , userRoutes);
+app.use('/', userRoutes);
+app.use('/', courseRoutes);
+app.use('/', admRoutes);
 
 /* Conexão Sync */ 
 const force = false;

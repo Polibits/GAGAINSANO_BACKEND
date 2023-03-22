@@ -36,7 +36,11 @@ const UserInfo = db.define('UserInfo' , {
         allowNull : true,
         require: false,
     },
-    
+    integrityHash: {
+        type: DataTypes.STRING,
+        allowNull : true,
+        require: true,
+    }
 });
 
 const UserCredentials = db.define('UserCredentials' , {

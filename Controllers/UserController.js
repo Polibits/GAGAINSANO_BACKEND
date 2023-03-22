@@ -47,6 +47,7 @@ module.exports = class UserController{
         const salt = newSalt(saltLength);
         const SHAemail = sha256(email)
         const SHApassword = sha256(password + salt);
+        const integrityHash = sha256(email + password + salt);
         
         /* activation Status */
         const activationCode = randomString(activationCodeLenght);
@@ -60,7 +61,8 @@ module.exports = class UserController{
             "activationCode": activationCode,
             //"activationDeadline": activationDeadline,
             "activated": activated,
-            "UserId" : UserId
+            "UserId" : UserId,
+            
         }
     
         const userInfo = {
@@ -69,14 +71,12 @@ module.exports = class UserController{
             "username": username,
             "email": email,
             "userType": defaultUserType,
-            "cpf": cpf
+            "cpf": cpf,
+            "integrityHash": integrityHash
         }
     
         const userCourseAcess = {
-            UserId: UserId,
-            gaga_insano_fisica: false,
-            gaga_insano_matematica: false,
-            gaga_insano_fuvest: false,
+            UserId: UserId
         };
     
         console.log(userCredentials);
@@ -93,6 +93,7 @@ module.exports = class UserController{
                 'details':error
             });
             console.log(error);
+            return;
         }
 
         /* tentar registrar credenciais em UserCredentials */
@@ -105,6 +106,7 @@ module.exports = class UserController{
                 'details':error
             });
             console.log(error);
+            return;
         }
 
         /* tentar registrar credenciais em UserCredentials */
@@ -117,6 +119,7 @@ module.exports = class UserController{
                 'details':error
             });
             console.log(error);
+            return;
         }
 
         /* sucesso de todas as etapas */
@@ -125,7 +128,93 @@ module.exports = class UserController{
             'message':'usuário criado com sucesso',
             'details':userInfo
         });
-    }    
+    }
+
+    static async getAllUsersInfo(req, res) {
+        try {
+            const users = await UserInfo.findAll();
+            if(users){
+                res.send({
+                    'response':'sucess',
+                    'message':'usuários obtidos com sucesso',
+                    'users':users
+                });
+            }
+        } catch(error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível obter usuários',
+                'details':error
+            });
+        }
+    }
+
+    static async getUserInfo(req, res) {
+        const userId = req.query.UserId;
+        const email = req.query.email;
+        const cpf = req.query.cpf;
+
+        console.log(userId);
+        console.log(email);
+        console.log(cpf);
+        try {
+            if(userId != undefined){
+                const user = await UserInfo.findOne(
+                    {where:{'UserId':userId}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'id_does_not_exists',
+                        'message':'id do usuário não existe'
+                    });
+                }
+            } else if(email != undefined){
+                const user = await UserInfo.findOne(
+                    {where:{'email':email}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'email_does_not_exists',
+                        'message':'email do usuário não existe'
+                    });
+                }
+            } else if(cpf != undefined) {
+                const user = await UserInfo.findOne(
+                    {where:{'cpf':cpf}}
+                );
+                if(user){
+                    res.send({
+                        'response':'sucess',
+                        'message':'usuário obtido com sucesso',
+                        'user':user
+                    });
+                } else {
+                    res.send({
+                        'response':'cpf_does_not_exists',
+                        'message':'cpf do usuário não existe'
+                    });
+                }
+            }
+        } catch(error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível buscar usuário',
+                'details':error
+            });
+        }
+    }
 
     // TODO implementar melhor
     static async deleteUser(req , res){
@@ -214,91 +303,7 @@ module.exports = class UserController{
         }
     }
 
-    static async getAllUsersInfo(req, res) {
-        try {
-            const users = await UserInfo.findAll();
-            if(users){
-                res.send({
-                    'response':'sucess',
-                    'message':'usuários obtidos com sucesso',
-                    'users':users
-                });
-            }
-        } catch(error) {
-            res.send({
-                'response':'error',
-                'message':'não foi possível obter usuários',
-                'details':error
-            });
-        }
-    }
-
-    static async getUserInfo(req, res) {
-        const userId = req.query.UserId;
-        const email = req.query.email;
-        const cpf = req.query.cpf;
-
-        console.log(userId);
-        console.log(email);
-        console.log(cpf);
-        try {
-            if(userId != ''){
-                const user = await UserInfo.findOne(
-                    {where:{'UserId':userId}}
-                );
-                if(user){
-                    res.send({
-                        'response':'sucess',
-                        'message':'usuário obtido com sucesso',
-                        'user':user
-                    });
-                } else {
-                    res.send({
-                        'response':'id_does_not_exists',
-                        'message':'id do usuário não existe'
-                    });
-                }
-            } else if(email != ''){
-                const user = await UserInfo.findOne(
-                    {where:{'email':email}}
-                );
-                if(user){
-                    res.send({
-                        'response':'sucess',
-                        'message':'usuário obtido com sucesso',
-                        'user':user
-                    });
-                } else {
-                    res.send({
-                        'response':'email_does_not_exists',
-                        'message':'email do usuário não existe'
-                    });
-                }
-            } else if(cpf != '') {
-                const user = await UserInfo.findOne(
-                    {where:{'cpf':cpf}}
-                );
-                if(user){
-                    res.send({
-                        'response':'sucess',
-                        'message':'usuário obtido com sucesso',
-                        'user':user
-                    });
-                } else {
-                    res.send({
-                        'response':'cpf_does_not_exists',
-                        'message':'cpf do usuário não existe'
-                    });
-                }
-            }
-        } catch(error) {
-            res.send({
-                'response':'error',
-                'message':'não foi possível buscar usuário',
-                'details':error
-            });
-        }
-    }
+    
 
     static async test(req, res) {
         try {
