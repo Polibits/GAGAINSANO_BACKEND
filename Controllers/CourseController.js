@@ -1,17 +1,15 @@
-const UserInfo = require("../models/UserInfo");
-const UserCredentials = require("../models/UserCredentials");
-const CourseAcess = require("../models/CourseAcess");
-const CourseContent = require('../models/CourseContent')
-const CourseFramework = require("../models/CourseFramework")
-const Videos = require("../models/videos");
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const crypto = require("crypto");
-const saltLength = 64;
 const fs = require('fs');
 const dir = "C:/Temp/Xisto";
 const path = require('path');
 const fileUpload = require('express-fileupload');
+
+const Courses = require("../models/Courses");
+const CourseAcess = Courses.CourseAcess;
+const CourseFramework = Courses.CourseFramework;
+const CourseContent = Courses.CourseContent;
 
 const fileSecretNameLenght = 64;
 
@@ -125,6 +123,7 @@ module.exports = class CourseController {
 
     static async getCourseContent(req, res) {
         const courseCode = req.query.courseCode;
+
         try {
             console.log(courseCode);
             const courses = await CourseContent.findAll(
@@ -153,10 +152,10 @@ module.exports = class CourseController {
         }
         
         try {
-            console.log('---------\ntentando criar:\n', lecture, '\n----------');
             const created = await CourseContent.create(lecture);
             res.send({
-                'response':'sucess'
+                'response':'sucess',
+                'message':'aula registrada com sucesso'
             });
         } catch (error) {
             res.send({
@@ -165,38 +164,6 @@ module.exports = class CourseController {
             });
         }
     }
-}
-
-function registerNewCourse(ID, name, description){
-    const Course = { ID, name,description}
-    try{
-        const createdCourse =  CourseContent.create(Course)
-        console.log(createdCourse)
-        console.log('sucesso: curso registrado com sucesso')
-        //Verifica se não existe pasta
-        if (!fs.existsSync(name)){
-            console.log("Foi possível Criar o Diretório");
-        fs.mkdir(name, (err) => {
-        if (err) {
-            console.log("Não Foi possível Criar o Diretório");
-            return
-        }else{
-            console.log("Diretório criado!, o nome dele é" + name)
-        }});}
-        }catch(e){
-        console.log(e)
-        console.log("erro: não foi possível realizar operação")}
-}
-
-function getCourseInfo(courseID){
-    const CourseContent = CourseContent.findOne({
-        where: {
-            Id: courseID,
-        },
-        raw: true,
-      });
-      const CCJson = JSON.parse(JSON.stringify(CourseContent));
-      console.log(CCJson);
 }
 
 function sha256(content) {

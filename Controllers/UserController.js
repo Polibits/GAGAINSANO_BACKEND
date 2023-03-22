@@ -1,11 +1,13 @@
-const UserInfo = require("../models/UserInfo");
-const UserCredentials = require("../models/UserCredentials");
-const CourseAcess = require("../models/CourseAcess");
-const Videos = require("../models/videos");
-
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const crypto = require("crypto");
+
+const Users = require("../models/Users");
+const Courses = require("../models/Courses");
+
+const UserInfo = Users.UserInfo;
+const UserCredentials = Users.UserCredentials;
+const CourseAcess = Courses.CourseAcess;
 
 const saltLength = 64;
 const activationCodeLenght = 6;

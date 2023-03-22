@@ -2,6 +2,43 @@ const { DataTypes } = require('sequelize')
 
 const db = require('../db/conn')
 
+const UserInfo = db.define('UserInfo' , {
+    UserId: {
+        type: DataTypes.STRING,
+        allowNull : false,
+        require: true,
+        unique:true
+    },
+    fullName: {
+        type: DataTypes.STRING,
+        allowNull : false,
+        require: true,
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull : false,
+        require: true,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull : false,
+        require: true,
+        unique:true
+    },
+    cpf: {
+        type: DataTypes.STRING,
+        allowNull : false,
+        require: true,
+        unique:true
+    },
+    userType: {
+        type: DataTypes.STRING,
+        allowNull : true,
+        require: false,
+    },
+    
+});
+
 const UserCredentials = db.define('UserCredentials' , {
     email: {
         type: DataTypes.STRING ,
@@ -40,4 +77,7 @@ const UserCredentials = db.define('UserCredentials' , {
     },
 })
 
-module.exports = UserCredentials
+module.exports = {
+    UserInfo,
+    UserCredentials
+}
