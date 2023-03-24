@@ -1,43 +1,31 @@
-const dotenv = require('dotenv/config');
-const axios = require('axios');
-const UserController = require("./Controllers/UserController");
-//const UserInfo = require("../models/userInfo");
-const UserCred = require("./models/usercripto")
-//const CourseAcess = require("../models/CourseAcess");
-//const Videos = require("../models/videos");
-const fullName = "2Henrique Eduardo dos Santos de Souza";
-const preferedName = "2Henrique Eduardo";
-const email = "henrique_eduardo_souza@hotmail.com";
-const password = "2henrique123";
-const cpf = "456.456.456-78";
-const bcrypt = require("bcrypt");
-const Sequelize = require("sequelize");
-const crypto = require("crypto");
+const EmailController = require('./Controllers/EmailController.js');
+var dotenv = require('dotenv/config');
 
-// UserController.registerUser(fullName, preferedName, email, password, cpf);
+async function Send() {
+    const email = process.env.SERVER_OUTLOOK_USERNAME;
+    const password = process.env.SERVER_OUTLOOK_PASSWORD;
 
-//var exists = UserController.userEmailExists(email);
-//console.log(exists);
+    const ServerEmailOrigin = new EmailController.Origin(
+        'smtp.outlook.com', 
+        'Servidor Gagá Insano',
+        email,
+        password
+    );
 
+    const Message = new EmailController.Message(
+        'teste', 
+        'essa é uma mensagem de teste, para verificar o envio de emails do gagá insano', 
+        '<p>essa é uma mensagem de teste, para verificar o envio de emails do gagá insano</p>', 
+        ['henrique_eduardo_souza@hotmail.com']
+    );
 
-async function findUser(email) {
-    const shaEmails = sha256(email)
-    const usersInDB = await UserCred.findOne({
-        where: {email:shaEmails},
-            raw: true,
-        });
-    console.log(sha256(email))
-    // Método para transformar Objeto em Json String
-    const userInDBJson = JSON.parse(JSON.stringify(usersInDB));
-    console.log(userInDBJson)
-    console.log(usersInDB)
-    return userInDBJson;
-}
-function sha256(content) {
-    return crypto.createHash("sha256").update(content).digest("hex");
+    
+    EmailController.SendEmail(Message, ServerEmailOrigin).then((response) => {
+        console.log(response);
+    }).catch((error) => {
+        console.log(error);
+    });
+    
 }
 
- findUser('gui@gui.com').then((result) => {
-    console.log(result) 
-})
-
+Send();
