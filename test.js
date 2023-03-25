@@ -28,4 +28,5 @@ async function Send() {
     
 }
 
-Send();
+const email = 'henrique_edudo_souahotmail.com';
+console.log(EmailValidator.validate(email));

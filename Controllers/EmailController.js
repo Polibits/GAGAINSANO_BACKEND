@@ -84,8 +84,25 @@ async function SendEmail(message, origin){
     });
 }
 
+async function ServerSendEmail(message){
+    const ServerEmailOrigin = new Origin(
+        'smtp.outlook.com', 
+        'Servidor Gagá Insano',
+        process.env.SERVER_OUTLOOK_USERNAME,
+        process.env.SERVER_OUTLOOK_PASSWORD
+    );
+    
+    let send_message = await ServerEmailOrigin.transporter.sendMail({
+        from: ServerEmailOrigin.get_author_string(),
+        to: message.get_receivers_string(),
+        subject: message.subject,
+        text: message.text,
+        html: message.html
+    });
+}
+
 module.exports = {
-    SendEmail,
+    ServerSendEmail,
     Origin,
     Message
 }

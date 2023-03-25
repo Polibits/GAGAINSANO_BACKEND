@@ -1,3 +1,4 @@
+const EmailController = require('./EmailController');
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const crypto = require("crypto");
@@ -62,7 +63,6 @@ module.exports = class UserController{
             //"activationDeadline": activationDeadline,
             "activated": activated,
             "UserId" : UserId,
-            
         }
     
         const userInfo = {
@@ -82,6 +82,44 @@ module.exports = class UserController{
         console.log(userCredentials);
         console.log(userInfo);
         console.log(userCourseAcess);
+
+        // enviar código de confirmação
+        try {
+            const text = 'Olá, ' + username + 
+            '!\nSeja muito bem-vindo ao Gaga Insano!\n\n O código de ativação da sua conta é este:\n' + activationCode + '\n' +
+            '\nPara ativar sua conta, acesse www.gagainsano.com.br, faça login com seu email e senha e insira este código' +
+            '\n\nAtenção: este código expira em 1 hora' + 
+            'Caso tenha problemas, contate o suporte técnico' + 
+            '\ngagainsano.suporte@gmail.com\n' +
+            '\n\nEsta é uma mensagem automática, enviada pelo servidor';
+            const htmlText = '<h1>Olá, ' + username + '!</h1>' + 
+            '<h2>Seja muito bem-vindo(a) ao Gagá insano!</h2>' +
+            '<p>Seu código de ativação é: <b>' + activationCode + '</b><p/>' +
+            '\n<p>Para ativar sua conta, acesse <a>www.gagainsano.com.br</a>, faça login com seu email e senha e insira este código</p>' +
+            '\n<p>Atenção: este código expira em 1 hora<br>'+
+            '\nCaso tenha problemas, contate o suporte técnico<br>'+
+            '\ngagainsano.suporte@gmail.com</p>' +
+            '\n<p>Esta é uma mensagem automática, enviada pelo servidor</p>';
+
+            const message = new EmailController.Message(
+                'código de verificação', 
+                text, 
+                htmlText, 
+                [email]
+            );
+            console.log(htmlText);
+            const send = await EmailController.ServerSendEmail(message);
+            res.send('sucesso caraiooo');
+            return;
+        } catch (error) {
+            console.log(error);
+            res.send({
+                'response':'error',
+                'message':'não foi possível registrar usuário',
+                'details':error
+            });
+            return;
+        }
     
         /* tentar registrar credenciais em UserCredentials */
         try{
