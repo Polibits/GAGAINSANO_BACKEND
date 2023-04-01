@@ -109,8 +109,6 @@ module.exports = class UserController{
             );
             console.log(htmlText);
             const send = await EmailController.ServerSendEmail(message);
-            res.send('sucesso caraiooo');
-            return;
         } catch (error) {
             console.log(error);
             res.send({
@@ -251,6 +249,89 @@ module.exports = class UserController{
                 'message':'não foi possível buscar usuário',
                 'details':error
             });
+        }
+    }
+
+    static async getActivationStatus(req, res) {
+        var email = req.query.email;
+        try {
+            const userCredentials = await UserCredentials.findOne(
+                {where:{'email':sha256(email)}}
+            );
+            console.log(userCredentials.dataValues.activated);
+            if(userCredentials.dataValues.activated == true){
+                
+                res.send({
+                    'response':'sucess',
+                    'activated':true,
+                    'message':'status de ativação da conta obtido com sucesso'
+                });
+                return;
+            } else {
+                
+                res.send({
+                    'response':'sucess',
+                    'activated':false,
+                    'message':'status de ativação da conta obtido com sucesso'
+                });
+                return;
+            }
+            
+        } catch (error) {
+            console.log(error);
+            res.send({
+                'response':'error',
+                'message':'não foi possível obter status de ativação da conta',
+                'details':error
+            });
+            return;
+        }
+    }
+
+    static async setActivationStatus(req, res) {
+        var email = req.body.email;
+        var activationCode = req.body.activationCode;
+        const userActivationStatus = {activated: true}
+        console.log(req.body);
+        
+        try {
+            const userCredentials = await UserCredentials.findOne({
+                where: {email: sha256(email)}
+            });
+            console.log(userCredentials.dataValues);
+            if(userCredentials.activationCode == activationCode){
+                try {
+                    await UserCredentials.update(
+                        userActivationStatus,
+                        {where: {email: sha256(email)}
+                    });
+                } catch (error) {
+                    res.send({
+                        'response':'user_not_found',
+                        'message':'usuário não encontrado'
+                    });
+                    return;
+                }
+            } else {
+                res.send({
+                    'response':'wrong_activation_code',
+                    'message':'código de autenticação incorreto'
+                });
+                return;
+            }
+            
+            res.send({
+                'response':'sucess',
+                'message':'conta ativada com sucesso'
+            });
+            return;
+        } catch (error) {
+            res.send({
+                'response':'error',
+                'message':'não foi possível modificar status de ativação da conta',
+                'details':error
+            });
+            return;
         }
     }
 

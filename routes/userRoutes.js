@@ -10,5 +10,7 @@ router.post('/user/update');
 router.post('/user/delete' , UserController.deleteUser);
 router.get('/user/authenticate', UserController.authenticateCredentials);
 router.get('/user/test', UserController.test);
+router.get('/user/account/activation/read', UserController.getActivationStatus);
+router.post('/user/account/activation/set', UserController.setActivationStatus);
 
 module.exports = router;
